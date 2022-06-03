@@ -1,0 +1,6 @@
+.Login_container {
+  min-width: 100vh;
+  justify-content: center;
+  display: flex;
+  margin-top: 300px;
+}
