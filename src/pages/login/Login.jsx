@@ -3,7 +3,6 @@ import { Form, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
-import { Alert } from "antd";
 import { useEffect } from "react";
 import Swal from 'sweetalert2'
 
@@ -15,9 +14,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const submitLogin = async () => {
-    // let formdata = new FormData()
-    // formdata.append("email", email)
-    // formdata.append("password", password)
     try {
       const { data } = await axios.post("/admin/signin", {
         email: email,
@@ -63,7 +59,6 @@ const Login = () => {
         autoComplete="off"
       >
         <Form.Item
-          autoComplete={false}
           label="Таны email"
           name="Таны email"
           rules={[
@@ -74,7 +69,7 @@ const Login = () => {
           ]}
         >
           <Input
-            autoComplete="none"
+            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -92,6 +87,7 @@ const Login = () => {
           ]}
         >
           <Input.Password
+            autoComplete="off"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -111,7 +107,6 @@ const Login = () => {
           </Button>
         </Form.Item>
       </Form>
-      {success && <Alert message="Success Text" type="success" />}
     </div>
   );
 };

@@ -11,20 +11,13 @@ const { Column, ColumnGroup } = Table;
 const Datatable = () => {
   const [data, setData] = useState([]);
 
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
 
   const [visible, setVisible] = useState(false);
   const [editUser, setEditUser] = useState(false)
   const [editUserId, setEditUserId] = useState("")
   const [confirmLoading, setConfirmLoading] = useState(false);
-
-  //form for registering user
-
-  const [firstname, setFirstname] = useState("")
-  const [lastname, setLastname] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const getUsersFromApi = async () => {
@@ -34,81 +27,129 @@ const Datatable = () => {
       }
     }
     getUsersFromApi()
-  }, [])
+  }, [refreshKey])
 
   const showModal = () => {
     setVisible(true);
+    setEditUser(false)
+    form.resetFields()
   };
 
   const handleOk = () => {
     setVisible(false);
-    resetForm()
+    form.resetFields()
   };
 
   const handleCancel = () => {
     setVisible(false);
-    resetForm()
+    form.resetFields()
   };
 
   const handleDelete = (id) => {
     setData(data.filter((item) => item.id !== id));
   };
+  const handleResetForm = () => {
+    form.resetFields()
+  }
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-
-  const registerUser = async () => {
+  const registerUser = async (userRegisteration) => {
     setConfirmLoading(true)
-    // let formdata = new FormData()
-    // formdata.append("email", email)
-    // formdata.append("firstname", firstname)
-    // formdata.append("lastname", lastname)
-    // formdata.append("password", password)
     try {
-      const { data } = await axios.post("/signupUser", { email: email, firstName: firstname, lastName: lastname, password: password })
+      const { data } = await axios.post("/signupUser", userRegisteration)
       if (data.success) {
-        resetForm()
         setVisible(false)
         setConfirmLoading(false)
+        setRefreshKey(old => old + 1)
+        form.resetFields()
         new Swal({
           icon: "success",
-          title: "Хэрэглэгч бүртгэглээ"
+          title: data.result
+        })
+      }
+      if (!data.success) {
+        setConfirmLoading(false)
+        new Swal({
+          icon: "error",
+          title: data.result
         })
       }
     } catch (error) {
       setConfirmLoading(false)
+      console.log(error)
       new Swal({
         icon: "error",
-        title: "Бүртгэхэд алдаа гарсан"
+        title: "Хэрэглэгч бүртгэхэд алдаа гарлаа"
       })
     }
   }
 
   const EditUserHandle = async (user) => {
     setEditUserId(user._id)
+    console.log(user)
     form.setFieldsValue({
       email: user.email,
-      firstname: user.firstName,
-      lastname: user.lastName
+      firstName: user.firstName,
+      lastName: user.lastName
     });
     setVisible(true)
     setEditUser(true)
   }
 
-  const editUserApi = async () => {
-
+  const editUserApi = async (userEditedForm) => {
+    setConfirmLoading(true)
+    try {
+      const { data } = await axios.post(`/updateUser/${editUserId}`, userEditedForm)
+      if (data.success) {
+        setEditUserId(false)
+        setEditUser(false)
+        setRefreshKey(old => old + 1)
+        setVisible(false)
+        setConfirmLoading(false)
+        form.resetFields()
+        new Swal({
+          icon: "success",
+          title: data.result
+        })
+      }
+      if (!data.success) {
+        setConfirmLoading(false)
+        new Swal({
+          icon: "error",
+          title: data.result
+        })
+      }
+    } catch (error) {
+      setConfirmLoading(false)
+      console.log(error)
+      new Swal({
+        icon: "error",
+        title: "Хэрэглэгчийн мэдээлэл засахад алдаа гарлаа"
+      })
+    }
   }
 
-  const resetForm = () => {
-    setEmail("")
-    setFirstname("")
-    setLastname("")
-    setPassword("")
+  const deleteHandle = async (userId) => {
+    try {
+      const { data } = await axios.delete(`/deleteUser/${userId}`)
+      if (data.success) {
+        setRefreshKey(old => old + 1)
+        new Swal({
+          icon: "success",
+          title: data.result
+        })
+      }
+      if (!data.success) {
+        new Swal({
+          icon: "error",
+          title: data.result
+        })
+      }
+    } catch (error) {
+      new Swal({
+        icon: "error",
+        title: "Хэрэглэгч устгахад алдаа гарлаа"
+      })
+    }
   }
 
 
@@ -147,7 +188,7 @@ const Datatable = () => {
           render={(_, record) => (
             <Space size="middle">
               <button onClick={() => EditUserHandle(record)}>Edit</button>
-              <button>Delete</button>
+              <button onClick={() => deleteHandle(record._id)}>Delete</button>
             </Space>
           )}
         />
@@ -160,26 +201,28 @@ const Datatable = () => {
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
+        <Button onClick={handleResetForm}>Reset Form</Button>
         <Form
-          onFinish={editUser ? () => editUserApi() : () => registerUser()}
           form={form}
-          name="basic"
+          initialValues={{
+            lastName: "",
+            firstName: "",
+            password: "",
+            email: ""
+          }}
+          encType="multipart/formdata"
+          onFinish={editUser ? editUserApi : registerUser}
           labelCol={{
             span: 8,
           }}
           wrapperCol={{
             span: 16,
           }}
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
+          autoComplete="do-not-autofill"
         >
           <Form.Item
             label="Firstname"
-            name="Firstname"
+            name="firstName"
             rules={[
               {
                 required: true,
@@ -187,12 +230,12 @@ const Datatable = () => {
               },
             ]}
           >
-            <Input autoComplete={false} value={firstname} onChange={(e) => setFirstname(e.target.value)} />
+            <Input placeholder="Firstname" autoComplete="off" />
           </Form.Item>
 
           <Form.Item
             label="Lastname"
-            name="Lastname"
+            name="lastName"
             rules={[
               {
                 required: true,
@@ -200,12 +243,11 @@ const Datatable = () => {
               },
             ]}
           >
-            <Input autoComplete={false} value={lastname} onChange={(e) => setLastname(e.target.value)} />
+            <Input placeholder="Lastname" autoComplete="off" />
           </Form.Item>
           <Form.Item
             label="Email"
-            name="Email"
-            autoComplete={false}
+            name="email"
             rules={[
               {
                 required: true,
@@ -213,7 +255,7 @@ const Datatable = () => {
               },
             ]}
           >
-            <Input autoComplete={false} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input placeholder="Email" autoComplete="off" />
           </Form.Item>
           {
             editUser === false &&
@@ -223,11 +265,11 @@ const Datatable = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input your password!',
+                  message: 'Please input your Password!',
                 },
               ]}
             >
-              <Input.Password value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input.Password placeholder="password" autoComplete="off" />
             </Form.Item>
           }
           <Form.Item
@@ -238,11 +280,11 @@ const Datatable = () => {
           >
             {
               editUser ?
-                <Button onClick={() => editUserApi()} type="primary" htmlType="submit">
+                <Button block type="primary" htmlType="submit">
                   Edit
                 </Button>
                 :
-                <Button onClick={() => registerUser()} type="primary" htmlType="submit">
+                <Button block type="primary" htmlType="submit">
                   Submit
                 </Button>
             }

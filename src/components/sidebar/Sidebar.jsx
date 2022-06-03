@@ -24,22 +24,21 @@ const Sidebar = ({ whichComponent, setWhichComponent }) => {
       <hr />
       <div className="center">
         <ul>
-          <p className="title"></p>
           <button
-            style={{ color: "#7450f8" }}
+            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center"
             onClick={() => setWhichComponent("Dashboard")}
           >
-            <DashboardIcon className="icon" />
-            <span>Dashboard</span>
+            <DashboardIcon className="icon" sx={{ color: "#7450f8", fontSize: 40 }} />
+            <div className="text-[#969696]">Dashboard</div>
           </button>
           <p className="title">Жагсаалт</p>
 
           <button
-            style={{ color: "#7450f8" }}
+            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
             onClick={() => setWhichComponent("Хэрэглэгч")}
           >
-            <PersonOutlineIcon className="icon" />
-            <span>Хэрэглэгч</span>
+            <PersonOutlineIcon className="icon" sx={{ color: "#7450f8", fontSize: 20 }} />
+            <div className="text-[#969696]">Хэрэглэгч</div>
           </button>
 
           <Link to="/products" style={{ textDecoration: "none" }}>
