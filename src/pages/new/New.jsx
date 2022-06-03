@@ -8,8 +8,7 @@ const New = ({ inputs, title }) => {
   const [file, setFile] = useState("");
 
   return (
-    <div className="new">
-      <Sidebar />
+    <div className="new ">
       <div className="newContainer">
         <Navbar />
         <div className="top">

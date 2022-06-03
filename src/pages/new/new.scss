@@ -1,6 +1,9 @@
 .new {
   width: 100%;
   display: flex;
+  position: absolute;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
 
   .newContainer {
     flex: 6;

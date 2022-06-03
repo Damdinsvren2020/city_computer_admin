@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ whichComponent, setWhichComponent }) => {
   const { dispatch } = useContext(DarkModeContext);
   return (
     <div className="sidebar">
@@ -25,17 +25,23 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <p className="title"></p>
-          <li>
+          <button
+            style={{ color: "#7450f8" }}
+            onClick={() => setWhichComponent("Dashboard")}
+          >
             <DashboardIcon className="icon" />
             <span>Dashboard</span>
-          </li>
+          </button>
           <p className="title">Жагсаалт</p>
-          <Link to="/users" style={{ textDecoration: "none" }}>
-            <li>
-              <PersonOutlineIcon className="icon" />
-              <span>Хэрэглэгч</span>
-            </li>
-          </Link>
+
+          <button
+            style={{ color: "#7450f8" }}
+            onClick={() => setWhichComponent("Хэрэглэгч")}
+          >
+            <PersonOutlineIcon className="icon" />
+            <span>Хэрэглэгч</span>
+          </button>
+
           <Link to="/products" style={{ textDecoration: "none" }}>
             <li>
               <StoreIcon className="icon" />

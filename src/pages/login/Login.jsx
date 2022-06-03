@@ -3,30 +3,32 @@ import { Form, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
-import { Alert } from 'antd';
+import { Alert } from "antd";
 import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState(false)
-  const [data, setData] = useState("")
+  const [success, setSuccess] = useState(false);
+  const [data, setData] = useState("");
   const navigate = useNavigate();
-
 
   const submitLogin = async () => {
     // let formdata = new FormData()
     // formdata.append("email", email)
     // formdata.append("password", password)
     try {
-      const { data } = await axios.post("/admin/signin", { email: email, password: password })
-      console.log(data.message)
+      const { data } = await axios.post("/admin/signin", {
+        email: email,
+        password: password.trim(),
+      });
+      console.log(data.message);
       if (data.token) {
-        setSuccess(true)
-        setData(data.token)
+        setSuccess(true);
+        setData(data.token);
       }
     } catch (error) {
-      setSuccess(false)
+      setSuccess(false);
     }
   };
   useEffect(() => {
@@ -38,7 +40,6 @@ const Login = () => {
       navigate("/home");
     }
   }, [data, navigate]);
-
 
   return (
     <div className="Login_container">
@@ -66,7 +67,11 @@ const Login = () => {
             },
           ]}
         >
-          <Input autoComplete="none" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input
+            autoComplete="none"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item
@@ -91,13 +96,17 @@ const Login = () => {
             span: 16,
           }}
         >
-          <Button onClick={() => submitLogin()} type="primary" htmlType="submit">
+          <Button
+            onClick={() => submitLogin()}
+            type="primary"
+            htmlType="submit"
+          >
             Нэвтрэх
           </Button>
         </Form.Item>
       </Form>
       {success && <Alert message="Success Text" type="success" />}
-    </div >
+    </div>
   );
 };
 

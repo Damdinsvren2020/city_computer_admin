@@ -13,10 +13,11 @@ import axios from "axios";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
-axios.defaults.headers.common['authorization'] = "Bearer " + token
-axios.defaults.baseURL = "http://localhost:3001/api"
+axios.defaults.headers.post["Content-Type"] = "multipart/formdata";
+axios.defaults.headers.common["authorization"] = "Bearer " + token;
+axios.defaults.baseURL = "http://localhost:3001/api";
 
 const rootReducer = combineReducers({
   introduction: introduction,

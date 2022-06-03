@@ -8,10 +8,9 @@ import { useContext, useEffect } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { useNavigate } from "react-router-dom";
 
-
 function App() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const { darkMode } = useContext(DarkModeContext);
   useEffect(() => {
     if (token) {

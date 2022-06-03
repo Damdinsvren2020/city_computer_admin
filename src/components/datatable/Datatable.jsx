@@ -3,12 +3,18 @@ import { DataGrid } from "@mui/x-data-grid";
 import { userColumns, userRows } from "../../datatablesource";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import New from "../../pages/new/New";
 
 const Datatable = () => {
   const [data, setData] = useState(userRows);
+  const [userModal, setUserModal] = useState(false);
 
   const handleDelete = (id) => {
     setData(data.filter((item) => item.id !== id));
+  };
+
+  const AddUser = () => {
+    setUserModal(true);
   };
 
   const actionColumn = [
@@ -37,9 +43,7 @@ const Datatable = () => {
     <div className="datatable">
       <div className="datatableTitle">
         Нийт хэрэглэгч
-        <Link to="/users/new" className="link">
-          Нэмэх
-        </Link>
+        <button onClick={() => AddUser()}>Nemeh</button>
       </div>
       <DataGrid
         className="datagrid"
@@ -49,6 +53,7 @@ const Datatable = () => {
         rowsPerPageOptions={[9]}
         checkboxSelection
       />
+      {userModal && <New />}
     </div>
   );
 };
