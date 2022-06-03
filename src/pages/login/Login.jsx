@@ -5,6 +5,7 @@ import "./login.css";
 import axios from "axios";
 import { Alert } from "antd";
 import { useEffect } from "react";
+import Swal from 'sweetalert2'
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,10 +23,15 @@ const Login = () => {
         email: email,
         password: password.trim(),
       });
-      console.log(data.message);
       if (data.token) {
         setSuccess(true);
         setData(data.token);
+        Swal.fire({
+          title: 'WELCOME',
+          text: data.user.email,
+          icon: 'success',
+          confirmButtonText: 'Continue'
+        })
       }
     } catch (error) {
       setSuccess(false);
