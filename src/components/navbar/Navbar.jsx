@@ -4,9 +4,17 @@ import FullscreenExitOutlinedIcon from "@mui/icons-material/FullscreenExitOutlin
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+
   const { dispatch } = useContext(DarkModeContext);
+  const navigate = useNavigate();
+
+  const logOutUser = () => {
+    navigate("/");
+    localStorage.clear()
+  }
 
   return (
     <div className="navbar">
@@ -32,6 +40,9 @@ const Navbar = () => {
               alt=""
               className="avatar"
             />
+          </div>
+          <div>
+            <button onClick={logOutUser}>Log Out</button>
           </div>
         </div>
       </div>
