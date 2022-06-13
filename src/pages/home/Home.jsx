@@ -6,6 +6,8 @@ import Featured from "../../components/featured/Featured";
 import Chart from "../../components/chart/Chart";
 import User from "../users/User";
 import Dashboard from "../../components/dashboard/dashboard";
+import Category from "../category/category";
+import Product from "../product/product";
 import { useState } from "react";
 
 const Home = () => {
@@ -15,6 +17,10 @@ const Home = () => {
     switch (whichComponent) {
       case "Хэрэглэгч":
         return <User />;
+      case "Ангилал":
+        return <Category />;
+      case "Бүтээгдхүүн":
+        return <Product />;
       case "Dashboard":
         return <Dashboard />;
       default:

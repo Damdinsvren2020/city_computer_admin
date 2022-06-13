@@ -1,8 +1,7 @@
-import "./datatable.scss";
-import { Link } from "react-router-dom";
+import "./product.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Table, Tag, Space } from "antd";
@@ -60,6 +59,7 @@ const Datatable = () => {
         setVisible(false);
         setConfirmLoading(false);
         setRefreshKey((old) => old + 1);
+        form.resetFields();
         new Swal({
           icon: "success",
           title: data.result,
@@ -169,20 +169,6 @@ const Datatable = () => {
           <Column title="Last Name" dataIndex="lastName" key="lastName" />
         </ColumnGroup>
         <Column title="Email" dataIndex="email" key="email" />
-        {/* <Column
-          title="status"
-          dataIndex="status"
-          key="status"
-          render={(status) => (
-            <>
-              {status.map((status) => (
-                <Tag color="blue" key={status}>
-                  {status}
-                </Tag>
-              ))}
-            </>
-          )}
-        /> */}
         <Column
           title="Action"
           key="action"

@@ -1,8 +1,7 @@
-import "./datatable.scss";
-import { Link } from "react-router-dom";
+import "./category_table.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Table, Tag, Space } from "antd";
@@ -14,16 +13,18 @@ const Datatable = () => {
   const [form] = Form.useForm();
 
   const [visible, setVisible] = useState(false);
-  const [editUser, setEditUser] = useState(false);
-  const [editUserId, setEditUserId] = useState("");
+  const [editCategory, seteditCategory] = useState(false);
+  const [editCategoryId, seteditCategoryId] = useState("");
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
     const getUsersFromApi = async () => {
-      const { data } = await axios.get("/getUsers");
+      const { data } = await axios.get("/category/getcategory");
+      console.log("category ", data.payload);
       if (data.success) {
-        setData(data.payload);
+        setCategoryList(data.payload);
       }
     };
     getUsersFromApi();
@@ -31,7 +32,7 @@ const Datatable = () => {
 
   const showModal = () => {
     setVisible(true);
-    setEditUser(false);
+    seteditCategory(false);
     form.resetFields();
   };
 
@@ -48,69 +49,61 @@ const Datatable = () => {
   const handleDelete = (id) => {
     setData(data.filter((item) => item.id !== id));
   };
-  const handleResetForm = () => {
-    form.resetFields();
-  };
 
-  const registerUser = async (userRegisteration) => {
+  const Category = async (form) => {
     setConfirmLoading(true);
     try {
-      const { data } = await axios.post("/signupUser", userRegisteration);
+      const { data } = await axios.post("/category/create", form);
       if (data.success) {
         setVisible(false);
         setConfirmLoading(false);
         setRefreshKey((old) => old + 1);
         new Swal({
           icon: "success",
-          title: data.result,
+          title: "Амжилттай",
         });
       }
       if (!data.success) {
         setConfirmLoading(false);
         new Swal({
           icon: "error",
-          title: data.result,
+          title: "Алдаа",
         });
       }
     } catch (error) {
       setConfirmLoading(false);
       console.log(error);
-      new Swal({
-        icon: "error",
-        title: "Хэрэглэгч бүртгэхэд алдаа гарлаа",
-      });
     }
   };
 
-  const EditUserHandle = async (user) => {
-    setEditUserId(user._id);
-    console.log(user);
+  const editCategoryHandle = async (category) => {
+    seteditCategoryId(category._id);
+    console.log(category);
     form.setFieldsValue({
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      name: category.name,
+      slug: category.slug,
     });
     setVisible(true);
-    setEditUser(true);
+    seteditCategory(true);
   };
 
-  const editUserApi = async (userEditedForm) => {
+  const editCategoryApi = async (editCategoryForm) => {
     setConfirmLoading(true);
     try {
       const { data } = await axios.post(
-        `/updateUser/${editUserId}`,
-        userEditedForm
+        `/updateUser/${editCategoryId}`,
+        editCategoryForm
       );
       if (data.success) {
-        setEditUserId(false);
-        setEditUser(false);
+        seteditCategoryId(false);
+        seteditCategory(false);
         setRefreshKey((old) => old + 1);
         setVisible(false);
         setConfirmLoading(false);
         form.resetFields();
         new Swal({
           icon: "success",
-          title: data.result,
+          name: data.result,
         });
       }
       if (!data.success) {
@@ -125,7 +118,7 @@ const Datatable = () => {
       console.log(error);
       new Swal({
         icon: "error",
-        title: "Хэрэглэгчийн мэдээлэл засахад алдаа гарлаа",
+        title: "Ангилалийн мэдээлэл засахад алдаа гарлаа",
       });
     }
   };
@@ -149,7 +142,7 @@ const Datatable = () => {
     } catch (error) {
       new Swal({
         icon: "error",
-        title: "Хэрэглэгч устгахад алдаа гарлаа",
+        title: "Ангилал устгахад алдаа гарлаа",
       });
     }
   };
@@ -157,62 +150,43 @@ const Datatable = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        Нийт хэрэглэгч
+        Нийт Ангилал
         <Button type="primary" onClick={showModal}>
-          ХЭРЭГЛЭГЧ НЭМЭХ
+          Нэмэх
         </Button>
       </div>
 
-      <Table dataSource={data}>
-        <ColumnGroup title="Name">
-          <Column title="First Name" dataIndex="firstName" key="firstName" />
-          <Column title="Last Name" dataIndex="lastName" key="lastName" />
-        </ColumnGroup>
-        <Column title="Email" dataIndex="email" key="email" />
-        {/* <Column
-          title="status"
-          dataIndex="status"
-          key="status"
-          render={(status) => (
-            <>
-              {status.map((status) => (
-                <Tag color="blue" key={status}>
-                  {status}
-                </Tag>
-              ))}
-            </>
-          )}
-        /> */}
+      <Table dataSource={categoryList}>
+        <Column>
+          <Column title="Ангилалын нэр" dataIndex="name" key="name" />
+        </Column>
         <Column
-          title="Action"
+          title="Үйлдэл"
           key="action"
           render={(_, record) => (
             <Space size="middle">
-              <button onClick={() => EditUserHandle(record)}>Edit</button>
-              <button onClick={() => deleteHandle(record._id)}>Delete</button>
+              <button onClick={() => editCategoryHandle(record)}>Засах</button>
+              <button onClick={() => deleteHandle(record._id)}>Усгтах</button>
             </Space>
           )}
         />
       </Table>
 
       <Modal
-        title={editUser ? "Хэрэглэгч засах" : "Хэрэглэгч бүртгэх"}
+        title={editCategory ? "Ангилал засах" : "Ангилал бүртгэх"}
         visible={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <Button onClick={handleResetForm}>Reset Form</Button>
         <Form
           form={form}
           initialValues={{
-            lastName: "",
-            firstName: "",
-            password: "",
-            email: "",
+            name: "",
+            slug: "",
           }}
           encType="multipart/formdata"
-          onFinish={editUser ? editUserApi : registerUser}
+          onFinish={editCategory ? editCategoryApi : Category}
           labelCol={{
             span: 8,
           }}
@@ -222,69 +196,43 @@ const Datatable = () => {
           autoComplete="do-not-autofill"
         >
           <Form.Item
-            label="Firstname"
-            name="firstName"
+            label="name"
+            name="name"
             rules={[
               {
                 required: true,
-                message: "Please input your Firstname!",
+                message: "Ангилалын нэр ээ оруулна уу!",
               },
             ]}
           >
-            <Input placeholder="Firstname" autoComplete="off" />
+            <Input placeholder="name" autoComplete="off" />
           </Form.Item>
 
           <Form.Item
-            label="Lastname"
-            name="lastName"
+            label="slug"
+            name="slug"
             rules={[
               {
                 required: true,
-                message: "Please input your Lastname!",
+                message: "Та slug аа оруулна уу!",
               },
             ]}
           >
-            <Input placeholder="Lastname" autoComplete="off" />
+            <Input placeholder="slug" autoComplete="off" />
           </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Email!",
-              },
-            ]}
-          >
-            <Input placeholder="Email" autoComplete="off" />
-          </Form.Item>
-          {editUser === false && (
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Password!",
-                },
-              ]}
-            >
-              <Input.Password placeholder="password" autoComplete="off" />
-            </Form.Item>
-          )}
           <Form.Item
             wrapperCol={{
               offset: 8,
               span: 16,
             }}
           >
-            {editUser ? (
+            {editCategory ? (
               <Button block type="primary" htmlType="submit">
                 Edit
               </Button>
             ) : (
               <Button block type="primary" htmlType="submit">
-                Submit
+                Button
               </Button>
             )}
           </Form.Item>
