@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
 import { useEffect } from "react";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ const Login = () => {
 
   const submitLogin = async () => {
     try {
-      const { data } = await axios.post("/admin/signin", {
+      const { data } = await axios.post("login", {
         email: email,
         password: password.trim(),
       });
@@ -23,11 +23,11 @@ const Login = () => {
         setSuccess(true);
         setData(data.token);
         Swal.fire({
-          title: 'WELCOME',
+          title: "WELCOME",
           text: data.user.email,
-          icon: 'success',
-          confirmButtonText: 'Continue'
-        })
+          icon: "success",
+          confirmButtonText: "Continue",
+        });
       }
     } catch (error) {
       setSuccess(false);

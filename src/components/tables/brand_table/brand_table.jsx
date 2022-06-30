@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import "./category_table.scss";
+import "./brand_table.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { Form, Input, Button, Card, message, Upload } from "antd";
@@ -25,16 +25,17 @@ const Datatable = () => {
   const [editCategoryId, seteditCategoryId] = useState("");
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [angilal, setAngilal] = useState([]);
+  const [brand, setBrand] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   useEffect(() => {
     axios
-      .get("/angilal")
+      .get("/brand")
       .then((response) => {
         const data = response.data.data;
-        setAngilal(data);
+        console.log("dataaaaaa", response.data.data);
+        setBrand(data);
       })
       .catch((error) => {
         console.log(error);
@@ -51,9 +52,9 @@ const Datatable = () => {
     form.resetFields();
   };
 
-  const Categorycreate = async (category_Create) => {
+  const Banner_Create = async (category_Create) => {
     try {
-      const { data } = await axios.post("/angilal/image", category_Create);
+      const { data } = await axios.post("/brand", category_Create);
       if (data.Itemsuccess) {
         setVisible(false);
         setConfirmLoading(false);
@@ -95,7 +96,7 @@ const Datatable = () => {
     setConfirmLoading(true);
     try {
       const { data } = await axios.post(
-        `angilal/${editCategoryId}`,
+        `brand/${editCategoryId}`,
         editCategoryForm
       );
       if (data.success) {
@@ -123,14 +124,14 @@ const Datatable = () => {
       console.log(error);
       new Swal({
         icon: "error",
-        title: "Ангилалийн мэдээлэл засахад алдаа гарлаа",
+        title: "Брэндийн мэдээлэл засахад алдаа гарлаа",
       });
     }
   };
 
   const deleteHandle = async (userId) => {
     try {
-      const { data } = await axios.delete(`/angilal/${userId}`);
+      const { data } = await axios.delete(`/brand/${userId}`);
       if (data.success) {
         setRefreshKey((old) => old + 1);
         new Swal({
@@ -147,7 +148,7 @@ const Datatable = () => {
     } catch (error) {
       new Swal({
         icon: "error",
-        title: "Ангилал устгахад алдаа гарлаа",
+        title: "Брэнд устгахад алдаа гарлаа",
       });
     }
   };
@@ -161,7 +162,6 @@ const Datatable = () => {
 
     onChange(info) {
       if (info.file.status !== "uploading") {
-        // console.log(info.file, info.fileList);
       }
 
       if (info.file.status === "done") {
@@ -175,7 +175,7 @@ const Datatable = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        Нийт Ангилал
+        Нийт Брэнд
         <Button type="primary" onClick={showModal}>
           Нэмэх
         </Button>
@@ -185,13 +185,13 @@ const Datatable = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell className="tableCell">Ангилал нэр</TableCell>
+                <TableCell className="tableCell">Брэнд нэр</TableCell>
                 <TableCell className="tableCell">Зураг</TableCell>
                 <TableCell className="tableCell">Үйлдэл</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {angilal.map((row) => (
+              {brand.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="cellWrapper">
                     <h2>{row.name}</h2>
@@ -215,13 +215,13 @@ const Datatable = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={angilal.length}
+        count={brand.length}
         rowsPerPage={rowsPerPage}
         page={page}
       />
 
       <Modal
-        title={editCategory ? "Ангилал засах" : "Ангилал нэмэх"}
+        title={editCategory ? "Брэнд засах" : "Брэнд нэмэх"}
         width={380}
         visible={visible}
         confirmLoading={confirmLoading}
@@ -237,7 +237,7 @@ const Datatable = () => {
             description: "",
           }}
           encType="multipart/formdata"
-          onFinish={editCategory ? editCategoryApi : Categorycreate}
+          onFinish={editCategory ? editCategoryApi : Banner_Create}
           labelCol={{
             span: 8,
           }}
@@ -247,19 +247,16 @@ const Datatable = () => {
           autoComplete="do-not-autofill"
         >
           <Form.Item
-            label="Ангилал"
+            label="Брэнд"
             name="name"
             rules={[
               {
                 required: true,
-                message: "Ангилалын нэр оруулаагүй байна!",
+                message: "Брэнд нэр оруулаагүй байна!",
               },
             ]}
           >
-            <Input
-              placeholder="Ангилалын нэр ээ оруулна уу"
-              autoComplete="off"
-            />
+            <Input placeholder="Брэнд нэр ээ оруулна уу" autoComplete="off" />
           </Form.Item>
           <Form.Item
             label="Тайлбар"
@@ -271,10 +268,7 @@ const Datatable = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Ангилалын тайлбар оруулна уу"
-              autoComplete="off"
-            />
+            <Input placeholder="Брэнд тайлбар оруулна уу" autoComplete="off" />
           </Form.Item>
           <Form.Item label="Зураг оруулах">
             <Upload {...props}>

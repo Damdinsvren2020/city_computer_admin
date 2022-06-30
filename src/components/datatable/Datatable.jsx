@@ -1,11 +1,10 @@
 import "./datatable.scss";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Table, Tag, Space } from "antd";
+import { Table, Space, Card } from "antd";
 const { Column, ColumnGroup } = Table;
 
 const Datatable = () => {
@@ -156,140 +155,134 @@ const Datatable = () => {
 
   return (
     <div className="datatable">
-      <div className="datatableTitle">
-        Нийт хэрэглэгч
-        <Button type="primary" onClick={showModal}>
-          ХЭРЭГЛЭГЧ НЭМЭХ
-        </Button>
-      </div>
+      <Card hoverable style={{ width: "1200px", height: "600px" }}>
+        <div className="datatableTitle">
+          Нийт хэрэглэгч
+          <Button type="primary" onClick={showModal}>
+            ХЭРЭГЛЭГЧ НЭМЭХ
+          </Button>
+        </div>
+        <Table dataSource={data}>
+          <ColumnGroup title="Name">
+            <Column title="First Name" dataIndex="firstName" key="firstName" />
+            <Column title="Last Name" dataIndex="lastName" key="lastName" />
+          </ColumnGroup>
+          <Column title="Email" dataIndex="email" key="email" />
+          <Column
+            title="Action"
+            key="action"
+            render={(_, record) => (
+              <Space size="middle">
+                <button onClick={() => EditUserHandle(record)}>Edit</button>
+                <button onClick={() => deleteHandle(record._id)}>Delete</button>
+              </Space>
+            )}
+          />
+        </Table>
 
-      <Table dataSource={data}>
-        <ColumnGroup title="Name">
-          <Column title="First Name" dataIndex="firstName" key="firstName" />
-          <Column title="Last Name" dataIndex="lastName" key="lastName" />
-        </ColumnGroup>
-        <Column title="Email" dataIndex="email" key="email" />
-        {/* <Column
-          title="status"
-          dataIndex="status"
-          key="status"
-          render={(status) => (
-            <>
-              {status.map((status) => (
-                <Tag color="blue" key={status}>
-                  {status}
-                </Tag>
-              ))}
-            </>
-          )}
-        /> */}
-        <Column
-          title="Action"
-          key="action"
-          render={(_, record) => (
-            <Space size="middle">
-              <button onClick={() => EditUserHandle(record)}>Edit</button>
-              <button onClick={() => deleteHandle(record._id)}>Delete</button>
-            </Space>
-          )}
-        />
-      </Table>
-
-      <Modal
-        title={editUser ? "Хэрэглэгч засах" : "Хэрэглэгч бүртгэх"}
-        visible={visible}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-      >
-        <Button onClick={handleResetForm}>Reset Form</Button>
-        <Form
-          form={form}
-          initialValues={{
-            lastName: "",
-            firstName: "",
-            password: "",
-            email: "",
-          }}
-          encType="multipart/formdata"
-          onFinish={editUser ? editUserApi : registerUser}
-          labelCol={{
-            span: 8,
-          }}
-          wrapperCol={{
-            span: 16,
-          }}
-          autoComplete="do-not-autofill"
+        <Modal
+          title={editUser ? "Хэрэглэгч засах" : "Хэрэглэгч бүртгэх"}
+          visible={visible}
+          okText={
+            editUser ? (
+              <h1 style={{ color: "white" }}>Засах</h1>
+            ) : (
+              <h1 style={{ color: "white" }}>Бүртгэх</h1>
+            )
+          }
+          onOk={editUser ? editUserApi : registerUser}
+          confirmLoading={confirmLoading}
+          onCancel={handleCancel}
         >
-          <Form.Item
-            label="Firstname"
-            name="firstName"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Firstname!",
-              },
-            ]}
+          {/* <Button onClick={handleResetForm}>Reset Form</Button> */}
+          <Form
+            form={form}
+            initialValues={{
+              lastName: "",
+              firstName: "",
+              password: "",
+              email: "",
+            }}
+            encType="multipart/formdata"
+            onFinish={editUser ? editUserApi : registerUser}
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            autoComplete="do-not-autofill"
           >
-            <Input placeholder="Firstname" autoComplete="off" />
-          </Form.Item>
-
-          <Form.Item
-            label="Lastname"
-            name="lastName"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Lastname!",
-              },
-            ]}
-          >
-            <Input placeholder="Lastname" autoComplete="off" />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Email!",
-              },
-            ]}
-          >
-            <Input placeholder="Email" autoComplete="off" />
-          </Form.Item>
-          {editUser === false && (
             <Form.Item
-              label="Password"
-              name="password"
+              label="Firstname"
+              name="firstName"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Password!",
+                  message: "Please input your Firstname!",
                 },
               ]}
             >
-              <Input.Password placeholder="password" autoComplete="off" />
+              <Input placeholder="Firstname" autoComplete="off" />
             </Form.Item>
-          )}
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          >
-            {editUser ? (
-              <Button block type="primary" htmlType="submit">
-                Edit
-              </Button>
-            ) : (
-              <Button block type="primary" htmlType="submit">
-                Submit
-              </Button>
+
+            <Form.Item
+              label="Lastname"
+              name="lastName"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Lastname!",
+                },
+              ]}
+            >
+              <Input placeholder="Lastname" autoComplete="off" />
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Email!",
+                },
+              ]}
+            >
+              <Input placeholder="Email" autoComplete="off" />
+            </Form.Item>
+            {editUser === false && (
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your Password!",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="password" autoComplete="off" />
+              </Form.Item>
             )}
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item
+              wrapperCol={{
+                offset: 8,
+                span: 16,
+              }}
+            >
+              {editUser ? (
+                <Button block type="primary" htmlType="submit">
+                  Edit
+                </Button>
+              ) : (
+                <Button block type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              )}
+            </Form.Item>
+          </Form>
+        </Modal>
+      </Card>
     </div>
   );
 };

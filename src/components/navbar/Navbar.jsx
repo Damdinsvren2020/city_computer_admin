@@ -7,14 +7,13 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-
   const { dispatch } = useContext(DarkModeContext);
   const navigate = useNavigate();
 
   const logOutUser = () => {
     navigate("/");
-    localStorage.clear()
-  }
+    localStorage.clear();
+  };
 
   return (
     <div className="navbar">

@@ -9,11 +9,12 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import SettingsSystemDaydreamOutlinedIcon from "@mui/icons-material/SettingsSystemDaydreamOutlined";
 import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 
-const Sidebar = ({ whichComponent, setWhichComponent }) => {
+const Sidebar = ({ setWhichComponent }) => {
   const { dispatch } = useContext(DarkModeContext);
   return (
     <div className="sidebar">
@@ -56,6 +57,7 @@ const Sidebar = ({ whichComponent, setWhichComponent }) => {
             />
             <div className="text-[#969696]">Ангилал</div>
           </button>
+
           <button
             className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
             onClick={() => setWhichComponent("Бүтээгдхүүн")}
@@ -65,6 +67,26 @@ const Sidebar = ({ whichComponent, setWhichComponent }) => {
               sx={{ color: "#7450f8", fontSize: 20 }}
             />
             <div className="text-[#969696]">Бүтээгдхүүн</div>
+          </button>
+          <button
+            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
+            onClick={() => setWhichComponent("Баннер")}
+          >
+            <InsertPhotoIcon
+              className="icon"
+              sx={{ color: "#7450f8", fontSize: 20 }}
+            />
+            <div className="text-[#969696]">Баннер</div>
+          </button>
+          <button
+            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
+            onClick={() => setWhichComponent("Брэнд")}
+          >
+            <InsertPhotoIcon
+              className="icon"
+              sx={{ color: "#7450f8", fontSize: 20 }}
+            />
+            <div className="text-[#969696]">Брэнд</div>
           </button>
           <li>
             <CreditCardIcon className="icon" />

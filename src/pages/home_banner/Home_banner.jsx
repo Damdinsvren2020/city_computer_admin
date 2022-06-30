@@ -1,18 +1,17 @@
-import "./list.scss";
-import Sidebar from "../../components/sidebar/Sidebar";
+import React from "react";
+import "./home_banner.scss";
 import Navbar from "../../components/navbar/Navbar";
-import Datatable from "../../components/datatable/Datatable";
+import Banner_Table from "../../components/tables/banner_table/banner_table";
 
-const List = () => {
+const Home_banner = () => {
   return (
-    <div className="list">
-      <Sidebar />
-      <div className="listContainer">
+    <div className="Banner">
+      <div className="BannerContainer">
         <Navbar />
-        <Datatable />
+        <Banner_Table />
       </div>
     </div>
   );
 };
 
-export default List;
+export default Home_banner;
