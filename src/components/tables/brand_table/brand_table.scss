@@ -80,10 +80,11 @@
   .cellWrapper {
     display: flex;
     align-items: center;
+    height: 250px;
     width: 100%;
 
     .image {
-      width: 200px;
+     width: 100px;
       // height: 100px;
       margin-right: 10px;
       object-fit: contain;

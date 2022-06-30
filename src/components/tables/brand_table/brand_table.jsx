@@ -192,12 +192,12 @@ const Datatable = () => {
             </TableHead>
             <TableBody>
               {brand.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="cellWrapper">
+                <TableRow key={row._id}>
+                  <TableCell className="tableCell">
                     <h2>{row.name}</h2>
                   </TableCell>
                   <TableCell className="tableCell">
-                    <div className="cellWrapper">
+                    <div>
                       <img
                         src={"http://localhost:3001" + row.link}
                         alt=""

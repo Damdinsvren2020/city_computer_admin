@@ -30,6 +30,10 @@ const Login = () => {
         });
       }
     } catch (error) {
+      Swal.fire({
+        title: error.message,
+        icon: "warning",
+      });
       setSuccess(false);
     }
   };

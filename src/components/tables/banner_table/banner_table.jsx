@@ -103,7 +103,7 @@ const Datatable = () => {
             </TableHead>
             <TableBody>
               {picturesList.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row._id}>
                   <TableCell className="tableCell">
                     <div className="cellWrapper">
                       <img
@@ -114,7 +114,11 @@ const Datatable = () => {
                       {row.product}
                     </div>
                   </TableCell>
-                  <button onClick={() => deleteBanner()}>Delete</button>
+                  <TableCell className="tableCell">
+                    <div className="cellWrapper">
+                      <button onClick={() => deleteBanner()}>Delete</button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
