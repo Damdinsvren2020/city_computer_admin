@@ -40,6 +40,13 @@ const Datatable = () => {
       }
     }
     getCategory()
+    const getProducts = async () => {
+      const { data } = await axios.get("/product")
+      if (data.success) {
+        setData(data.result)
+      }
+    }
+    getProducts()
   }, [])
   useEffect(() => {
     axios
@@ -405,6 +412,14 @@ const Datatable = () => {
           </div>
         </div>
       </Modal>
+
+      {
+        data.length !== 0 && data?.map((item, index) => (
+          <div className="w-full p-2">
+            <img src={`http://localhost:3001/` + item.avatar} style={{ width: 200 }} />
+          </div>
+        ))
+      }
     </div>
   );
 };
