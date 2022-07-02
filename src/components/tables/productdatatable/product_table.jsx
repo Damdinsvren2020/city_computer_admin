@@ -1,17 +1,25 @@
 import "./product.scss";
 import { useEffect, useState } from "react";
 import { Dropdown, Modal } from "antd";
-import { UploadOutlined, DownOutlined, PlusOutlined, UpOutlined, RightOutlined, LineOutlined, MinusCircleOutlined } from "@ant-design/icons";
+import { UploadOutlined, DownOutlined, PlusOutlined, UpOutlined, RightOutlined, LineOutlined, MinusCircleOutlined, EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Table, Tag, Space } from "antd";
+import { Card } from "antd";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./styles.css";
+import { CDNURL } from "../../../CDNURL";
 
 const { Column, ColumnGroup } = Table;
 
@@ -44,6 +52,7 @@ const Datatable = () => {
       const { data } = await axios.get("/product")
       if (data.success) {
         setData(data.result)
+        console.log(data.result)
       }
     }
     getProducts()
@@ -82,12 +91,16 @@ const Datatable = () => {
 
   //create and save product form
 
+  const [editLoading, setEditLoading] = useState(false)
+
   const [productName, setProductName] = useState("")
   const [productDescription, setProductDescription] = useState("")
   const [productBrand, setProductBrand] = useState("")
   const [productSKU, setProductSKU] = useState("")
   const [productPrice, setProductPrice] = useState(0)
   const [productQuantity, setProductQuantity] = useState(0)
+  const [productEdit, setEditProduct] = useState(false)
+  const [productEditId, setProductEditId] = useState("")
 
 
   const [productSpecAddName, setProductSpecAddName] = useState("")
@@ -97,6 +110,9 @@ const Datatable = () => {
   const [image1, setImage1] = useState(null)
   const [image2, setImage2] = useState(null)
   const [images, setImages] = useState(null)
+  const [imageNew1, setImageNew1] = useState(false)
+  const [imageNew2, setImageNew2] = useState(false)
+  const [imagesNew, setImageNew] = useState(false)
 
   const [productSpecList, setProductSpecList] = useState([])
 
@@ -134,6 +150,8 @@ const Datatable = () => {
       }
       const { data } = await axios.post("/product", formdata)
       if (data.success) {
+        resetForm()
+        setCreateProductModal(false)
         Swal.fire({
           icon: "success",
           title: "Added"
@@ -143,6 +161,98 @@ const Datatable = () => {
       Swal.fire({
         icon: "error",
         title: "Error"
+      })
+    }
+  }
+
+  const resetForm = () => {
+    setBrand([])
+    setSubID("")
+    setNameOfCategory("")
+    setNameOfCategorySub("")
+    setCategoryList([])
+    setImage1(null)
+    setImage2(null)
+    setImages(null)
+    setMatchingIndex("")
+    setProductDescription("")
+    setProductBrand("")
+    setProductName("")
+    setProductPrice(0)
+    setProductQuantity(0)
+    setProductSKU("")
+    setProductSpecList([])
+    setFilteredCategoryList([])
+    setStep(null)
+  }
+
+  const setUpEditModal = async (item) => {
+    setEditLoading(true)
+    setProductEditId(item._id)
+    setSubID(item.SubID._id)
+    setImage1(item.avatar)
+    setImage2(item.thumbnail)
+    setImages(item.imagesProduct)
+    setProductDescription(item.content)
+    setProductBrand(item.brand._id)
+    setProductName(item.name)
+    setProductPrice(item.price)
+    setProductQuantity(item.quantity)
+    setProductSKU(item.SKU)
+    setProductSpecList(item.specs)
+    const { data } = await axios.get("/productSub/" + item.SubID._id)
+    if (data.success) {
+      setEditLoading(false)
+      setCreateProductModal(true)
+      setEditProduct(true)
+      setStep("first")
+      setNameOfCategory(data.result.angilal.name)
+      setNameOfCategorySub(item.SubID.name)
+    } else {
+      setEditLoading(false)
+    }
+  }
+
+  const editProduct = async () => {
+    try {
+
+      let formdata = new FormData()
+      formdata.append("SubID", subID)
+      formdata.append("name", productName)
+      formdata.append("content", productDescription)
+      formdata.append("brand", productBrand)
+      formdata.append("price", productPrice)
+      formdata.append("quantity", productQuantity)
+      formdata.append("SKU", productSKU)
+      productSpecList?.forEach(item => { formdata.append("specs", JSON.stringify(item)) })
+      imageNew1 ? formdata.append("avatar", image1[0]) : formdata.append("avatarOld", image1)
+      imageNew1 && formdata.append("newAvatar", imageNew1)
+      imageNew2 ? formdata.append("thumbnail", image2[0]) : formdata.append("thumbnailOld", image2)
+      imageNew2 && formdata.append("newThumbnail", imageNew2)
+      if (imagesNew) {
+        for (const key of Object.keys(images)) {
+          formdata.append('images', images[key])
+        }
+        formdata.append("newImages", imagesNew)
+      } else {
+        formdata.append('imagesOld', images)
+      }
+      const { data } = await axios.post("/product/" + productEditId, formdata)
+      if (data.success) {
+        setEditLoading(false)
+        resetForm()
+        setCreateProductModal(false)
+        Swal.fire({
+          icon: "success",
+          title: "Засагдлаа"
+        })
+      }
+    } catch (error) {
+      setEditLoading(false)
+      Swal.fire({
+        icon: "error",
+        title: "Алдаа гарлаа",
+        text: error.message,
       })
     }
   }
@@ -158,24 +268,65 @@ const Datatable = () => {
           Бүтээгдэхүүн нэмэх
         </Button>
       </div>
+      {
+        editLoading && <div style={{ alignSelf: 'center' }} className=" top-0 bottom-0 left-0 right-0 absolute z-30 justify-center items-center flex bg-gray-200 rounded-xl text-[50px]">
+          <LoadingOutlined />
+        </div>
+      }
 
-      {/* <Table dataSource={data}>
-        <ColumnGroup title="Name">
-          <Column title="First Name" dataIndex="firstName" key="firstName" />
-          <Column title="Last Name" dataIndex="lastName" key="lastName" />
-        </ColumnGroup>
-        <Column title="Email" dataIndex="email" key="email" />
-        <Column
-          title="Action"
-          key="action"
-          render={(_, record) => (
-            <Space size="middle">
-              <button onClick={() => EditUserHandle(record)}>Edit</button>
-              <button onClick={() => deleteHandle(record._id)}>Delete</button>
-            </Space>
-          )}
-        />
-      </Table> */}
+      <Card hoverable>
+        <TableContainer component={Paper} className="table">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell className="tableCell">Зураг</TableCell>
+                <TableCell className="tableCell">Нэр</TableCell>
+                <TableCell className="tableCell">Тоо ширхэг</TableCell>
+                <TableCell className="tableCell">Тайлбар</TableCell>
+                <TableCell className="tableCell">Үнэ</TableCell>
+                <TableCell className="tableCell">SKU</TableCell>
+                <TableCell className="tableCell">Үйлдэл</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((row) => (
+                <TableRow key={row._id}>
+                  <TableCell className="tableCell">
+                    <div>
+                      <img
+                        src={`${CDNURL}/${row.avatar}`}
+                        alt=""
+                        className="h-48 w-48 object-contain "
+                      />
+                      {row.product}
+                    </div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.name}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.quantity}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.content}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.price}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.SKU}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <button onClick={() => setUpEditModal(row)} className="text-xl text-yellow-500">
+                      <EditOutlined />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
 
       <Modal
         title={"Бараа бүртгэх"}
@@ -188,9 +339,8 @@ const Datatable = () => {
             disabled: Step === "final" ? false : true
           }
         }
-        onOk={
-          () => registerProduct()
-        }
+        okText={productEdit ? "Засах" : "Илгээх"}
+        onOk={productEdit ? () => editProduct() : () => registerProduct()}
         visible={createProductModal}
       >
         <div className="w-full h-[500px]">
@@ -322,16 +472,28 @@ const Datatable = () => {
             {
               Step === "third" &&
               <div className="w-full p-2">
-                <input onChange={(e) => setImage1(e.target.files)} type={"file"} className="w-full p-2 border my-1" placeholder="Зураг" />
+                <input onChange={(e) => {
+                  setImage1(e.target.files)
+                  setImageNew1(true)
+                }} type={"file"} className="w-full p-2 border my-1" placeholder="Зураг" />
                 <div className="w-full flex flex-wrap gap-2 mt-4 w-48 h-48">
                   {
-                    <img src={image1 ? (image1 ? URL.createObjectURL(image1[0] && image1[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                    imageNew1 && <img src={image1 ? (image1 ? URL.createObjectURL(image1[0] && image1[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                  }
+                  {
+                    imageNew1 === false && <img src={CDNURL + "/" + image1} alt="profile" className="w-full h-full object-cover" />
                   }
                 </div>
-                <input onChange={(e) => setImage2(e.target.files)} type={"file"} className="w-full p-2 border my-1" placeholder="Зураг-2" />
+                <input onChange={(e) => {
+                  setImage2(e.target.files)
+                  setImageNew2(true)
+                }} type={"file"} className="w-full p-2 border my-1" placeholder="Зураг-2" />
                 <div className="w-full flex flex-wrap gap-2 mt-4 w-48 h-48">
                   {
-                    <img src={image2 ? (image2 ? URL.createObjectURL(image2[0] && image2[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                    imageNew2 && <img src={image1 ? (image1 ? URL.createObjectURL(image1[0] && image1[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                  }
+                  {
+                    imageNew2 == false && <img src={CDNURL + "/" + image2} alt="profile" className="w-full h-full object-cover" />
                   }
                 </div>
                 <input multiple onChange={(e) => {
@@ -341,8 +503,9 @@ const Datatable = () => {
                   else {
                     setImages(null);
                   }
+                  setImageNew(true)
                 }} className="w-full p-2 border my-1" type="file" id="images" placeholder="Зурагнууд" />
-                <div className="w-full h-48 overflow-auto flex">
+                {imagesNew && <div className="w-full h-48 overflow-auto flex">
                   {
                     images?.length !== 0 ? images?.map((item, index) => (
                       <div key={index} className="w-24 h-24 border ">
@@ -351,7 +514,19 @@ const Datatable = () => {
                       :
                       <h1></h1>
                   }
-                </div>
+                </div>}
+                {
+                  imagesNew === false && <div className="w-full h-48 overflow-auto flex">
+                    {
+                      images?.length !== 0 ? images?.map((item, index) => (
+                        <div key={index} className="w-24 h-24 border ">
+                          <img src={`${CDNURL}/${item}`} alt="profile" className="w-full h-full object-cover" />
+                        </div>))
+                        :
+                        <h1></h1>
+                    }
+                  </div>
+                }
                 <button onClick={() => setStep("final")} className="w-full p-2 bg-green-400 rounded-sm">Дараагийх</button>
               </div>
             }
@@ -360,18 +535,35 @@ const Datatable = () => {
               <div className="w-full flex flex-row p-2 h-[400px]">
                 <div className="w-3/6 flex flex-col gap-1 p-2">
                   {
-                    <img src={image1 ? (image1 ? URL.createObjectURL(image1[0] && image1[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                    imageNew1 && <img src={image1 ? (image1 ? URL.createObjectURL(image1[0] && image1[0]) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
                   }
-                  <div className="flex gap-2 h-48 w-full">
-                    {
-                      images?.length !== 0 ? images?.map((item, index) => (
-                        <div key={index} className="w-24 h-24 border ">
-                          <img src={item ? (item ? URL.createObjectURL(item && item) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
-                        </div>))
-                        :
-                        <h1></h1>
-                    }
-                  </div>
+                  {
+                    imageNew1 === false && <img src={CDNURL + "/" + image1} alt="profile" className="w-full h-full object-cover" />
+                  }
+                  {
+                    imagesNew && <div className="w-full h-48 overflow-auto flex">
+                      {
+                        images?.length !== 0 ? images?.map((item, index) => (
+                          <div key={index} className="w-24 h-24 border ">
+                            <img src={item ? (item ? URL.createObjectURL(item && item) : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg") : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"} alt="profile" className="w-full h-full object-cover" />
+                          </div>))
+                          :
+                          <h1></h1>
+                      }
+                    </div>
+                  }
+                  {
+                    imagesNew === false && <div className="w-full h-48 overflow-auto flex">
+                      {
+                        images?.length !== 0 ? images?.map((item, index) => (
+                          <div key={index} className="w-24 h-24 border ">
+                            <img src={`${CDNURL}/${item}`} alt="profile" className="w-full h-full object-cover" />
+                          </div>))
+                          :
+                          <h1></h1>
+                      }
+                    </div>
+                  }
                 </div>
                 <div className="w-3/6 p-2 flex flex-col">
                   <div className="w-full flex flex-col">
@@ -413,13 +605,13 @@ const Datatable = () => {
         </div>
       </Modal>
 
-      {
+      {/* {
         data.length !== 0 && data?.map((item, index) => (
           <div className="w-full p-2">
             <img src={`http://localhost:3001/` + item.avatar} style={{ width: 200 }} />
           </div>
         ))
-      }
+      } */}
     </div>
   );
 };

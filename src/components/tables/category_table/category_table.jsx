@@ -17,6 +17,7 @@ import Paper from "@mui/material/Paper";
 
 import axios from "axios";
 import Swal from "sweetalert2";
+import { CDNURL } from "../../../CDNURL";
 
 const Datatable = () => {
   const [form] = Form.useForm();
@@ -252,7 +253,7 @@ const Datatable = () => {
                   <TableCell className="tableCell">
                     <div className="cellWrapper">
                       <img
-                        src={"http://localhost:3001" + row.link}
+                        src={CDNURL + row.link}
                         alt=""
                         className="image"
                       />

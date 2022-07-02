@@ -14,6 +14,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { CDNURL } from "../../../CDNURL";
 
 const onChange = (value) => {
   console.log(`selected ${value}`);
@@ -107,9 +108,9 @@ const Datatable = () => {
                   <TableCell className="tableCell">
                     <div className="cellWrapper">
                       <img
-                        src={"http://localhost:3001" + row.link}
+                        src={CDNURL + row.link}
                         alt=""
-                        className="image"
+                        className="w-48 h-48 object-contain"
                       />
                       {row.product}
                     </div>
