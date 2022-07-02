@@ -158,7 +158,7 @@ const Datatable = () => {
   };
 
   const props = {
-    name: "thumbnail",
+    name: "image",
     action: "http://localhost:3001/api/banner",
     headers: {
       authorization: "Bearer " + localStorage.getItem("token"),
