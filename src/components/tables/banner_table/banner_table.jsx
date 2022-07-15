@@ -28,10 +28,10 @@ const Datatable = () => {
   const [editCategory, seteditCategory] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [picturesList, setPictureList] = useState([]);
+
   useEffect(() => {
     const getBanner = async () => {
       const { data } = await axios.get("banner/getAll");
-      console.log("datas", data);
       setPictureList(data.data);
     };
     getBanner();
@@ -60,7 +60,6 @@ const Datatable = () => {
   useEffect(() => {
     const getBannerDelete = async () => {
       const { data } = await axios.delete("bannerDelete/");
-      console.log("datas", data);
       setPictureList(data.data);
     };
     getBannerDelete();

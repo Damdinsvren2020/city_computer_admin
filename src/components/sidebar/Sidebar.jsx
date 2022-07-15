@@ -88,6 +88,16 @@ const Sidebar = ({ setWhichComponent }) => {
             />
             <div className="text-[#969696]">Брэнд</div>
           </button>
+          <button
+            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
+            onClick={() => setWhichComponent("Баннер зурагнууд")}
+          >
+            <InsertPhotoIcon
+              className="icon"
+              sx={{ color: "#7450f8", fontSize: 20 }}
+            />
+            <div className="text-[#969696]">Баннер зурагнууд</div>
+          </button>
           <li>
             <CreditCardIcon className="icon" />
             <span>Захиалга</span>

@@ -4,6 +4,8 @@ import "./brand_table.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { Form, Input, Button, Card, message, Upload } from "antd";
+import moment from "moment";
+
 import { UploadOutlined } from "@ant-design/icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -35,7 +37,6 @@ const Datatable = () => {
       .get("/brand")
       .then((response) => {
         const data = response.data.data;
-        console.log("dataaaaaa", response.data.data);
         setBrand(data);
       })
       .catch((error) => {
@@ -199,12 +200,8 @@ const Datatable = () => {
                   </TableCell>
                   <TableCell className="tableCell">
                     <div>
-                      <img
-                        src={CDNURL + row.link}
-                        alt=""
-                        className="image"
-                      />
-                      {row.product}
+                      <img src={CDNURL + row.link} alt="" className="image" />
+                      {/* {row.product} */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -213,13 +210,6 @@ const Datatable = () => {
           </Table>
         </TableContainer>
       </Card>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={brand.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-      />
 
       <Modal
         title={editCategory ? "Брэнд засах" : "Брэнд нэмэх"}

@@ -30,9 +30,8 @@ const Datatable = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const [dropDownAngilal, setDropDownAngilal] = useState(false)
-  const [matchingIndex, setMatchingIndex] = useState("")
-
+  const [dropDownAngilal, setDropDownAngilal] = useState(false);
+  const [matchingIndex, setMatchingIndex] = useState("");
 
   useEffect(() => {
     axios
@@ -40,7 +39,7 @@ const Datatable = () => {
       .then((response) => {
         const data = response.data.data;
         setAngilal(data);
-        setFilteredCategory(data)
+        setFilteredCategory(data);
       })
       .catch((error) => {
         console.log(error);
@@ -178,53 +177,50 @@ const Datatable = () => {
     },
   };
 
-  const [subAngilalName, setSubAngilalName] = useState("")
-  const [subAngilalDesc, setSubAngilalDesc] = useState("")
-  const [FilteredCategory, setFilteredCategory] = useState([])
+  const [subAngilalName, setSubAngilalName] = useState("");
+  const [subAngilalDesc, setSubAngilalDesc] = useState("");
+  const [FilteredCategory, setFilteredCategory] = useState([]);
 
   const createSubAngilal = async (id) => {
     try {
       if (subAngilalName.trim() === "" || subAngilalDesc.trim() === "") {
         return Swal.fire({
           icon: "warning",
-          title: "Бүх хэсгийг бөглөнө үү"
-        })
+          title: "Бүх хэсгийг бөглөнө үү",
+        });
       }
-      let formdata = new FormData()
-      formdata.append("category", id)
-      formdata.append("name", subAngilalName)
-      formdata.append("content", subAngilalDesc)
-      formdata.append("angilal", id)
-      const { data } = await axios.post("/subangilal", formdata)
+      let formdata = new FormData();
+      formdata.append("category", id);
+      formdata.append("name", subAngilalName);
+      formdata.append("content", subAngilalDesc);
+      formdata.append("angilal", id);
+      const { data } = await axios.post("/subangilal", formdata);
       if (data.success) {
         setRefreshKey((old) => old + 1);
-        setSubAngilalName("")
-        setSubAngilalDesc("")
+        setSubAngilalName("");
+        setSubAngilalDesc("");
         Swal.fire({
           icon: "success",
-          title: "Нэмэгдсэн "
-        })
+          title: "Нэмэгдсэн ",
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const searchingCategory = (prop) => {
     if (angilal) {
       const SearchAngilal = angilal.filter((el) => {
-        if (prop === '') {
+        if (prop === "") {
           return el;
+        } else {
+          return el.name.toLowerCase().includes(prop);
         }
-        else {
-          return el.name.toLowerCase().includes(prop)
-        }
-      })
-      return setFilteredCategory(SearchAngilal)
+      });
+      return setFilteredCategory(SearchAngilal);
     }
-  }
-
-
+  };
 
   return (
     <div className="datatable">
@@ -252,11 +248,7 @@ const Datatable = () => {
                   </TableCell>
                   <TableCell className="tableCell">
                     <div className="cellWrapper">
-                      <img
-                        src={CDNURL + row.link}
-                        alt=""
-                        className="image"
-                      />
+                      <img src={CDNURL + row.link} alt="" className="image" />
                       {row.product}
                     </div>
                   </TableCell>
@@ -357,42 +349,64 @@ const Datatable = () => {
             </Form>
           </div>
           <div className="w-3/6">
-            <input autoCapitalize="none" onChange={(e) => searchingCategory(e.target.value)} type={"search"} className="w-full p-2 border rounded-sm" placeholder="Ангилал хайх" />
+            <input
+              autoCapitalize="none"
+              onChange={(e) => searchingCategory(e.target.value)}
+              type={"search"}
+              className="w-full p-2 border rounded-sm"
+              placeholder="Ангилал хайх"
+            />
             <div className="w-full h-[700px] overflow-auto">
-              {
-                FilteredCategory.map((item, index) => (
-                  <div key={index} className="w-full border p-2 my-2 mx-auto">
-                    <button onClick={() => {
-                      setDropDownAngilal(true)
-                      setMatchingIndex(index)
-                    }} className="w-full flex flex-row gap-2 items-center">
-                      <h1 className="text-black text-lg"><PlusOutlined /></h1>
-                      <h1 className="text-black text-lg">{item.name}</h1>
-                    </button>
-                    {
-                      matchingIndex === index && dropDownAngilal &&
-                      <div className="w-full h-96 overflow-auto">
-                        <div className="w-full flex flex-col gap-1">
-                          <div className="w-full flex flex-col gap-2">
-                            <input value={subAngilalName} onChange={(e) => setSubAngilalName(e.target.value)} className="w-full border p-2" placeholder="Дэд ангилал нэр" />
-                            <input value={subAngilalDesc} onChange={(e) => setSubAngilalDesc(e.target.value)} className="w-full border p-2" placeholder="Дэд ангилал тайлбар" />
-                            <button onClick={() => createSubAngilal(item._id)} className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"> <PlusOutlined /></button>
-                          </div>
-                          <div className="w-full ">
-                            {
-                              item?.SubAngilal?.map((item, index) => (
-                                <div className="w-full p-2 hover:bg-gray-200">
-                                  <h1>{item.name}</h1>
-                                </div>
-                              ))
-                            }
-                          </div>
+              {FilteredCategory.map((item, index) => (
+                <div key={index} className="w-full border p-2 my-2 mx-auto">
+                  <button
+                    onClick={() => {
+                      setDropDownAngilal(true);
+                      setMatchingIndex(index);
+                    }}
+                    className="w-full flex flex-row gap-2 items-center"
+                  >
+                    <h1 className="text-black text-lg">
+                      <PlusOutlined />
+                    </h1>
+                    <h1 className="text-black text-lg">{item.name}</h1>
+                  </button>
+                  {matchingIndex === index && dropDownAngilal && (
+                    <div className="w-full h-96 overflow-auto">
+                      <div className="w-full flex flex-col gap-1">
+                        <div className="w-full flex flex-col gap-2">
+                          <input
+                            value={subAngilalName}
+                            onChange={(e) => setSubAngilalName(e.target.value)}
+                            className="w-full border p-2"
+                            placeholder="Дэд ангилал нэр"
+                          />
+                          <input
+                            value={subAngilalDesc}
+                            onChange={(e) => setSubAngilalDesc(e.target.value)}
+                            className="w-full border p-2"
+                            placeholder="Дэд ангилал тайлбар"
+                          />
+                          <button
+                            onClick={() => createSubAngilal(item._id)}
+                            className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
+                          >
+                            {" "}
+                            <PlusOutlined />
+                          </button>
+                        </div>
+                        <div className="w-full ">
+                          {item?.SubAngilal?.map((item, index) => (
+                            <div className="w-full p-2 hover:bg-gray-200">
+                              <h1>{item.name}</h1>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    }
-                  </div>
-                ))
-              }
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

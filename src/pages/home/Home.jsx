@@ -10,6 +10,7 @@ import Category from "../category/category";
 import Product from "../product/product";
 import Banner from "../home_banner/Home_banner";
 import Brand from "../brand/brand";
+import Banner_images from "../banner_images/banner_images";
 import { useState } from "react";
 
 const Home = () => {
@@ -27,6 +28,8 @@ const Home = () => {
         return <Banner />;
       case "Брэнд":
         return <Brand />;
+      case "Баннер зурагнууд":
+        return <Banner_images />;
       case "Dashboard":
         return <Dashboard />;
       default:

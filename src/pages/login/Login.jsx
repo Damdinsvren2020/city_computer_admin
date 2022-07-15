@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import axios from "axios";
 import { useEffect } from "react";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
 import Swal from "sweetalert2";
 
 const Login = () => {
@@ -48,7 +50,10 @@ const Login = () => {
   }, [data, navigate]);
 
   return (
-    <div className="Login_container">
+    <div className="login">
+      <div>
+        <h2 className="text-center bold">City computer</h2>
+      </div>
       <Form
         name="basic"
         labelCol={{
@@ -63,26 +68,21 @@ const Login = () => {
         autoComplete="off"
       >
         <Form.Item
-          label="Таны email"
-          name="Таны email"
-          rules={[
-            {
-              required: true,
-              message: "Та email ээ оруулна уу!",
-            },
-          ]}
+          label="Email "
+          name={"email"}
+          rules={[{ required: true, message: "  Имэйл хаяг оруулна уу" }]}
         >
           <Input
-            autoComplete="off"
+            placeholder="Таны email "
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            prefix={<UserOutlined />}
           />
         </Form.Item>
 
         <Form.Item
-          autoComplete={false}
           label="Нууц үг"
-          name="Нууц үг"
+          autoComplete={false}
           rules={[
             {
               required: true,
@@ -93,7 +93,9 @@ const Login = () => {
           <Input.Password
             autoComplete="off"
             value={password}
+            placeholder="Нууц үг"
             onChange={(e) => setPassword(e.target.value)}
+            prefix={<LockOutlined />}
           />
         </Form.Item>
         <Form.Item
@@ -103,6 +105,7 @@ const Login = () => {
           }}
         >
           <Button
+            className="button"
             onClick={() => submitLogin()}
             type="primary"
             htmlType="submit"
