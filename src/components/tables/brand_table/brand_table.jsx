@@ -3,18 +3,21 @@ import * as React from "react";
 import "./brand_table.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
-import { Form, Input, Button, Card, message, Upload } from "antd";
+import { Form, Input, Button, Card, message, Upload, Dropdown } from "antd";
 import moment from "moment";
-
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  LoadingOutlined,
+  DownOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
-
+import MenuI from "./menu1/menu1";
 import Paper from "@mui/material/Paper";
 
 import axios from "axios";
@@ -174,42 +177,95 @@ const Datatable = () => {
     },
   };
 
+  const columns = [
+    {
+      key: "num",
+      title: "№",
+      width: 60,
+    },
+
+    {
+      key: "link",
+      title: "zurag",
+      dataIndex: "link",
+      render: (link) => (
+        <img src={`${CDNURL}/${link}`} className="w-24 h-24 object-contain" />
+      ),
+    },
+
+    {
+      key: "created",
+      title: "Огноо",
+      width: 150,
+      render: (text, record, idx) =>
+        record.created ? moment(record.created).format("YYYY-MM-DD") : "-",
+    },
+    {
+      title: "Үйлдэл",
+      key: "action",
+      fixed: "right",
+      render: (text, record) => {
+        return (
+          <>
+            <Dropdown
+              disabled={record.loading}
+              trigger="click"
+              overlay={MenuI(record)}
+            >
+              <a
+                className="ant-dropdown-link"
+                onClick={(e) => e.preventDefault()}
+              >
+                Үйлдэл
+                {record.loading ? (
+                  <LoadingOutlined spin={true} />
+                ) : (
+                  <DownOutlined />
+                )}
+              </a>
+            </Dropdown>
+          </>
+        );
+      },
+      width: 90,
+    },
+  ];
+
   return (
-    <div className="datatable">
-      <div className="datatableTitle">
-        Нийт Брэнд
-        <Button type="primary" onClick={showModal}>
-          Нэмэх
+    <Card
+      style={{ marginLeft: "20px" }}
+      extra={
+        <Button onClick={() => Banner_Create(true)} icon={<PlusOutlined />}>
+          Баннер нэмэх
         </Button>
-      </div>
-      <Card hoverable>
-        <TableContainer component={Paper} className="table">
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell className="tableCell">Брэнд нэр</TableCell>
-                <TableCell className="tableCell">Зураг</TableCell>
-                <TableCell className="tableCell">Үйлдэл</TableCell>
+      }
+    >
+      <TableContainer component={Paper} className="table">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell className="tableCell">Брэнд нэр</TableCell>
+              <TableCell className="tableCell">Зураг</TableCell>
+              <TableCell className="tableCell">Үйлдэл</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {brand.map((row) => (
+              <TableRow key={row._id}>
+                <TableCell className="tableCell">
+                  <h2>{row.name}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <div>
+                    <img src={CDNURL + row.link} alt="" className="image" />
+                    {/* {row.product} */}
+                  </div>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {brand.map((row) => (
-                <TableRow key={row._id}>
-                  <TableCell className="tableCell">
-                    <h2>{row.name}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <div>
-                      <img src={CDNURL + row.link} alt="" className="image" />
-                      {/* {row.product} */}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal
         title={editCategory ? "Брэнд засах" : "Брэнд нэмэх"}
@@ -284,7 +340,7 @@ const Datatable = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </Card>
   );
 };
 

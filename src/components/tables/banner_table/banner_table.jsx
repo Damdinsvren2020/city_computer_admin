@@ -28,7 +28,7 @@ const Datatable = () => {
   const [editCategory, seteditCategory] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [picturesList, setPictureList] = useState([]);
-
+  const [name, setName] = useState("");
   useEffect(() => {
     const getBanner = async () => {
       const { data } = await axios.get("banner/getAll");

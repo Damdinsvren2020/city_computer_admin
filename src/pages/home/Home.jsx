@@ -38,7 +38,7 @@ const Home = () => {
   };
 
   return (
-    <div className="home">
+    <div className="flex">
       <div className="w-96 flex flex-col h-screen">
         <Sidebar
           whichComponent={whichComponent}

@@ -1,14 +1,18 @@
-import "./navbar.scss";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import FullscreenExitOutlinedIcon from "@mui/icons-material/FullscreenExitOutlined";
-import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext } from "react";
+import React, { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+import { Layout, Menu, Row, Dropdown, Avatar } from "antd";
+import {
+  LogoutOutlined,
+  UserOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
+const { Header } = Layout;
 
 const Navbar = () => {
-  const { dispatch } = useContext(DarkModeContext);
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
   const logOutUser = () => {
     navigate("/");
@@ -16,36 +20,44 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar">
-      <div className="wrapper">
-        <div className="search"></div>
-        <div className="items">
-          <div className="item">
-            <DarkModeOutlinedIcon
-              className="icon"
-              onClick={() => dispatch({ type: "TOGGLE" })}
-            />
-          </div>
-          <div className="item">
-            <FullscreenExitOutlinedIcon className="icon" />
-          </div>
-
-          <div className="item">
-            <ListOutlinedIcon className="icon" />
-          </div>
-          <div className="item">
-            <img
-              src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-              alt=""
-              className="avatar"
-            />
-          </div>
+    <Layout>
+      <Header style={{ background: "#fff", height: 64, padding: "0 30px" }}>
+        <Row
+          align="middle"
+          type="flex"
+          justify="space-between"
+          style={{ height: "100%", width: "98%" }}
+        >
           <div>
-            <button onClick={logOutUser}>Log Out</button>
+            {React.createElement(
+              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+              {
+                className: "trigger",
+                onClick: () => setCollapsed(!collapsed),
+              }
+            )}
           </div>
-        </div>
-      </div>
-    </div>
+          <Dropdown
+            style={{ marginRight: "2rem" }}
+            overlay={
+              <Menu style={{ minWidth: 120 }}>
+                <Menu.Divider />
+                <Menu.Item>
+                  <a onClick={logOutUser} style={{ fontSize: 14 }}>
+                    <LogoutOutlined /> Гарах
+                  </a>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <a className="ant-dropdown-link">
+              <Avatar icon={<UserOutlined />}></Avatar>
+              <span style={{ marginLeft: "0.25rem" }}></span>
+            </a>
+          </Dropdown>
+        </Row>
+      </Header>
+    </Layout>
   );
 };
 

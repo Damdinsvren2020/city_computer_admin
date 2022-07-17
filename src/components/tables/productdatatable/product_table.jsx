@@ -2,7 +2,6 @@ import "./product.scss";
 import { useEffect, useState } from "react";
 import { Dropdown, Modal } from "antd";
 import {
-  UploadOutlined,
   DownOutlined,
   PlusOutlined,
   UpOutlined,
@@ -275,13 +274,18 @@ const Datatable = () => {
   };
 
   return (
-    <div className="datatable">
-      <div className="datatableTitle">
-        Бүтээгдэхүүн
-        <Button onClick={() => setCreateProductModal(true)} type="primary">
-          Бүтээгдэхүүн нэмэх
+    <Card
+      title="Бүтээгдхүүн"
+      style={{ marginLeft: "20px" }}
+      extra={
+        <Button
+          onClick={() => setCreateProductModal(true)}
+          icon={<PlusOutlined />}
+        >
+          Бүтээгдхүүн нэмэх
         </Button>
-      </div>
+      }
+    >
       {editLoading && (
         <div
           style={{ alignSelf: "center" }}
@@ -291,62 +295,60 @@ const Datatable = () => {
         </div>
       )}
 
-      <Card hoverable>
-        <TableContainer component={Paper} className="table">
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell className="tableCell">Зураг</TableCell>
-                <TableCell className="tableCell">Нэр</TableCell>
-                <TableCell className="tableCell">Тоо ширхэг</TableCell>
-                <TableCell className="tableCell">Тайлбар</TableCell>
-                <TableCell className="tableCell">Үнэ</TableCell>
-                <TableCell className="tableCell">SKU</TableCell>
-                <TableCell className="tableCell">Үйлдэл</TableCell>
+      <TableContainer component={Paper} className="table">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell className="tableCell">Зураг</TableCell>
+              <TableCell className="tableCell">Нэр</TableCell>
+              <TableCell className="tableCell">Тоо ширхэг</TableCell>
+              <TableCell className="tableCell">Тайлбар</TableCell>
+              <TableCell className="tableCell">Үнэ</TableCell>
+              <TableCell className="tableCell">SKU</TableCell>
+              <TableCell className="tableCell">Үйлдэл</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow key={row._id}>
+                <TableCell className="tableCell">
+                  <div>
+                    <img
+                      src={`${CDNURL}/${row.avatar}`}
+                      alt=""
+                      className="h-48 w-48 object-contain "
+                    />
+                    {row.product}
+                  </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.name}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.quantity}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.content}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.price}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.SKU}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <button
+                    onClick={() => setUpEditModal(row)}
+                    className="text-xl text-yellow-500"
+                  >
+                    <EditOutlined />
+                  </button>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row) => (
-                <TableRow key={row._id}>
-                  <TableCell className="tableCell">
-                    <div>
-                      <img
-                        src={`${CDNURL}/${row.avatar}`}
-                        alt=""
-                        className="h-48 w-48 object-contain "
-                      />
-                      {row.product}
-                    </div>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.name}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.quantity}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.content}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.price}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.SKU}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <button
-                      onClick={() => setUpEditModal(row)}
-                      className="text-xl text-yellow-500"
-                    >
-                      <EditOutlined />
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal
         title={"Бараа бүртгэх"}
@@ -805,15 +807,7 @@ const Datatable = () => {
           </div>
         </div>
       </Modal>
-
-      {/* {
-        data.length !== 0 && data?.map((item, index) => (
-          <div className="w-full p-2">
-            <img src={`http://localhost:3001/` + item.avatar} style={{ width: 200 }} />
-          </div>
-        ))
-      } */}
-    </div>
+    </Card>
   );
 };
 

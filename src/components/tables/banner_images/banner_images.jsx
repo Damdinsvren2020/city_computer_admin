@@ -1,36 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  Table,
-  Dropdown,
-  Form,
-  Button,
-  Card,
-  Modal,
-  Input,
-  InputNumber,
-  Upload,
-  Image,
-  message,
-} from "antd";
+import { Table, Dropdown, Button, Card, Modal } from "antd";
 import moment from "moment";
-import {
-  LoadingOutlined,
-  DownOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { LoadingOutlined, DownOutlined, PlusOutlined } from "@ant-design/icons";
 import MenuI from "./menu1/menu1";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 import { CDNURL } from "../../../CDNURL";
-const url = "localhost:3001/api/bannerimages";
 const Banner_images = () => {
   const [banner, setBanner] = useState([]);
-  const [form] = Form.useForm();
-  const [visible, setVisible] = useState(false);
+  const [createBannerModal, setCreateBannerModal] = useState(false);
+
   const [editCategory, seteditCategory] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [bannerEditId, setBannerEditId] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+  const [bannerEdit, setBannerEdit] = useState(false);
+
+  const [name, setName] = useState("");
 
   useEffect(() => {
     const getBanner = async () => {
@@ -40,31 +27,75 @@ const Banner_images = () => {
     getBanner();
   }, []);
 
-  const showModal = () => {
-    setVisible(true);
-    seteditCategory(false);
-    form.resetFields();
-  };
-  const handleCancel = () => {
-    setVisible(false);
-    form.resetFields();
-  };
-
-  //create and save banner form
-
-  const [name, setName] = useState("");
   const [orders, setOrders] = useState("");
-  let files = [];
-  const [image1, setImage1] = useState(false);
+  const [image2, setImage2] = useState(null);
+  const [image, setImage] = useState(null);
+  const [imageNew1, setImageNew1] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const registerBanner = async () => {
     try {
-      const resp = await axios.post(url, { name: name, orders: orders });
-      console.log("dadaaa", resp.data);
+      let formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("orders", orders);
+      formdata.append("thumbnail", image[0]);
+      const { data } = await axios.post("/bannerimages", formdata);
+      if (data.success) {
+        resetForm();
+        setCreateBannerModal(false);
+        Swal.fire({
+          icon: "success",
+          title: "Added",
+        });
+      }
     } catch (error) {
-      console.log(error.response);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+      });
     }
+  };
+
+  const editBanner = async () => {
+    try {
+      let formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("orders", orders);
+
+      formdata.append("thumbnail", image2[0]);
+
+      imageNew1
+        ? formdata.append("avatar", image2[0])
+        : formdata.append("avatarOld", image2);
+      imageNew1 && formdata.append("newAvatar", imageNew1);
+
+      const { data } = await axios.post(
+        "/bannerimages/" + bannerEditId,
+        formdata
+      );
+      if (data.success) {
+        setEditLoading(false);
+        resetForm();
+        setCreateBannerModal(false);
+        Swal.fire({
+          icon: "success",
+          title: "Засагдлаа",
+        });
+      }
+    } catch (error) {
+      setEditLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Алдаа гарлаа",
+        text: error.message,
+      });
+    }
+  };
+
+  const resetForm = () => {
+    setBanner([]);
+    setName("");
+    setOrders("");
+    setImage(null);
   };
 
   const columns = [
@@ -77,13 +108,24 @@ const Banner_images = () => {
       key: "name",
       title: "Нэр",
       dataIndex: "name",
-      render: (name) => <a>{name}</a>,
+      render: (Name) => <a>{Name}</a>,
     },
     {
       key: "orders",
       title: "Дараалал",
       dataIndex: "orders",
       render: (orders) => <a>{orders}</a>,
+    },
+    {
+      key: "thumbnail",
+      title: "zurag",
+      dataIndex: "thumbnail",
+      render: (thumbnail) => (
+        <img
+          src={`${CDNURL}/${thumbnail}`}
+          className="w-24 h-24 object-contain"
+        />
+      ),
     },
     {
       key: "created",
@@ -126,8 +168,12 @@ const Banner_images = () => {
   return (
     <Card
       title="Баннер"
+      style={{ marginLeft: "20px" }}
       extra={
-        <Button type="primary" onClick={showModal} icon={<PlusOutlined />}>
+        <Button
+          onClick={() => setCreateBannerModal(true)}
+          icon={<PlusOutlined />}
+        >
           Баннер нэмэх
         </Button>
       }
@@ -135,42 +181,16 @@ const Banner_images = () => {
       <Table size="small" columns={columns} dataSource={banner} />
       <Modal
         title={editCategory ? "Ангилал засах" : "Баннер оруулах"}
-        visible={visible}
+        visible={createBannerModal}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        onCancel={() => setCreateBannerModal(false)}
+        okText={bannerEdit ? "Засах" : "Илгээх"}
+        onOk={bannerEdit ? () => editBanner() : () => registerBanner()}
         okButtonProps={{
           disabled: true,
         }}
       >
-        {/* <input
-          required
-          value={bannerName}
-          onChange={(e) => setBannerName(e.target.value)}
-          type={"title"}
-          className="w-full p-2 border my-1"
-          placeholder="Баннер нэр"
-        />
-        <input
-          required
-          value={bannerOrders}
-          onChange={(e) => setBannerOrders(e.target.value)}
-          type={"number"}
-          className="w-full p-2 border my-1"
-          placeholder="Дараалал"
-        />
-        <input
-          onChange={(e) => {
-            setImage1(e.target.files);
-            setImageNew1(true);
-          }}
-          type={"file"}
-          className="w-full p-2 border my-1"
-          placeholder="Зураг"
-        />
-        <Button type="primary" onClick={registerBanner}>
-          Баннер нэмэх
-        </Button> */}
-        <form onSubmit={handleSubmit}>
+        <form>
           <div>
             <input
               type={"text"}
@@ -186,7 +206,33 @@ const Banner_images = () => {
               className="w-full p-2 border my-1"
               placeholder="Дараалал"
             />
-            <Button onClick={handleSubmit}>Үүсгэх</Button>
+            <div className="w-full flex flex-wrap gap-2 mt-4 w-48 h-48">
+              <input
+                onChange={(e) => {
+                  if (e.target?.files) {
+                    setImage(e.target.files);
+                  } else {
+                    setImage(null);
+                  }
+                }}
+                className="w-full p-2 border my-1"
+                type="file"
+                id="thumbnail"
+                placeholder="Зурагнууд"
+              />
+              <img
+                src={
+                  image
+                    ? image
+                      ? URL.createObjectURL(image[0] && image[0])
+                      : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                    : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                }
+                alt="profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <Button onClick={() => registerBanner()}>Үүсгэх</Button>
           </div>
         </form>
       </Modal>

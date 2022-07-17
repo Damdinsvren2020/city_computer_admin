@@ -1,142 +1,61 @@
-import "./sidebar.scss";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import CategoryIcon from "@mui/icons-material/Category";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import StoreIcon from "@mui/icons-material/Store";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import SettingsSystemDaydreamOutlinedIcon from "@mui/icons-material/SettingsSystemDaydreamOutlined";
-import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import React from "react";
 import { Link } from "react-router-dom";
-import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext } from "react";
+import { Layout, Menu } from "antd";
+import { PlusOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  RiBriefcase3Line,
+  RiFilter2Line,
+  RiImageFill,
+  RiShoppingBagFill,
+} from "react-icons/ri";
 
-const Sidebar = ({ setWhichComponent }) => {
-  const { dispatch } = useContext(DarkModeContext);
+// import Imagesss from "./logo-1.png";
+
+import "./Sidebar.css";
+
+const { Sider } = Layout;
+
+const Sidebar = () => {
   return (
-    <div className="sidebar">
-      <div className="top">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <span className="logo">City Computer</span>
-        </Link>
-      </div>
-      <hr />
-      <div className="center">
-        <ul>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center"
-            onClick={() => setWhichComponent("Dashboard")}
-          >
-            <DashboardIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 40 }}
-            />
-            <div className="text-[#969696]">Dashboard</div>
-          </button>
-          <p className="title">Жагсаалт</p>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Хэрэглэгч")}
-          >
-            <PersonOutlineIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Хэрэглэгч</div>
-          </button>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Ангилал")}
-          >
-            <CategoryIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Ангилал</div>
-          </button>
-
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Бүтээгдхүүн")}
-          >
-            <StoreIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Бүтээгдхүүн</div>
-          </button>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Баннер")}
-          >
-            <InsertPhotoIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Баннер</div>
-          </button>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Брэнд")}
-          >
-            <InsertPhotoIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Брэнд</div>
-          </button>
-          <button
-            className="flex flex-row hover:bg-violet-100 w-full gap-2.5 items-center p-[5px]"
-            onClick={() => setWhichComponent("Баннер зурагнууд")}
-          >
-            <InsertPhotoIcon
-              className="icon"
-              sx={{ color: "#7450f8", fontSize: 20 }}
-            />
-            <div className="text-[#969696]">Баннер зурагнууд</div>
-          </button>
-          <li>
-            <CreditCardIcon className="icon" />
-            <span>Захиалга</span>
-          </li>
-          <p className="title">SERVICE</p>
-          <li>
-            <SettingsSystemDaydreamOutlinedIcon className="icon" />
-            <span>System Health</span>
-          </li>
-          <li>
-            <PsychologyOutlinedIcon className="icon" />
-            <span>Logs</span>
-          </li>
-          <li>
-            <SettingsApplicationsIcon className="icon" />
-            <span>Settings</span>
-          </li>
-          <p className="title">Хэрэглэгч</p>
-          <li>
-            <AccountCircleOutlinedIcon className="icon" />
-            <span>Profile</span>
-          </li>
-          <li>
-            <ExitToAppIcon className="icon" />
-            <span>Гарах</span>
-          </li>
-        </ul>
-      </div>
-      <div className="bottom">
-        <div
-          className="colorOption"
-          onClick={() => dispatch({ type: "LIGHT" })}
-        ></div>
-        <div
-          className="colorOption"
-          onClick={() => dispatch({ type: "DARK" })}
-        ></div>
-      </div>
-    </div>
+    <Layout className="Sidebar">
+      <Sider width={220}>
+        <div className="logo" style={{ textAlign: "center" }}>
+          <Link to="/home">
+            <h3 style={{ padding: "20px 0 10px 0px" }}>АДМИН</h3>
+            {/* <img src={Imagesss} className="w-[200px] h-[150px]" /> */}
+          </Link>
+        </div>
+        <Menu mode="inline">
+          <Menu.ItemGroup key="g1" title="Каталог">
+            <Menu.Item icon={<RiImageFill />} key="banner_images">
+              <Link to="/banner_images">
+                <span>Баннер</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiBriefcase3Line />} key="brand">
+              <Link to="/brand">
+                <span>Брэнд</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiFilter2Line />} key="category">
+              <Link to="/category">
+                <span>Ангилал</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<UserOutlined />} key="users">
+              <Link to="/user">
+                <span>Хэрэглэгч</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiShoppingBagFill />} key="product">
+              <Link to="/product">
+                <span>Бүтээгдхүүн</span>
+              </Link>
+            </Menu.Item>
+          </Menu.ItemGroup>
+        </Menu>
+      </Sider>
+    </Layout>
   );
 };
 

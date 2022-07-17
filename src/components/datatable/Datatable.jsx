@@ -1,11 +1,12 @@
 import "./datatable.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Table, Space, Card } from "antd";
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
 const Datatable = () => {
   const [data, setData] = useState([]);
@@ -17,12 +18,17 @@ const Datatable = () => {
   const [editUserId, setEditUserId] = useState("");
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const getUsersFromApi = async () => {
-      const { data } = await axios.get("/getUsers");
+      const { data } = await axios.get("/users");
+
       if (data.success) {
-        setData(data.payload);
+        setData(data.users);
       }
     };
     getUsersFromApi();
@@ -54,7 +60,7 @@ const Datatable = () => {
   const registerUser = async (userRegisteration) => {
     setConfirmLoading(true);
     try {
-      const { data } = await axios.post("/signupUser", userRegisteration);
+      const { data } = await axios.post("/register", userRegisteration);
       if (data.success) {
         setVisible(false);
         setConfirmLoading(false);
@@ -87,7 +93,7 @@ const Datatable = () => {
     form.setFieldsValue({
       email: user.email,
       firstName: user.firstName,
-      lastName: user.lastName,
+      username: user.username,
     });
     setVisible(true);
     setEditUser(true);
@@ -154,136 +160,150 @@ const Datatable = () => {
   };
 
   return (
-    <div className="datatable">
-      <Card hoverable style={{ width: "1200px", height: "600px" }}>
-        <div className="datatableTitle">
-          Нийт хэрэглэгч
-          <Button type="primary" onClick={showModal}>
-            ХЭРЭГЛЭГЧ НЭМЭХ
-          </Button>
-        </div>
-        <Table dataSource={data}>
-          <ColumnGroup title="Name">
-            <Column title="First Name" dataIndex="firstName" key="firstName" />
-            <Column title="Last Name" dataIndex="lastName" key="lastName" />
-          </ColumnGroup>
-          <Column title="Email" dataIndex="email" key="email" />
-          <Column
-            title="Action"
-            key="action"
-            render={(_, record) => (
-              <Space size="middle">
-                <button onClick={() => EditUserHandle(record)}>Edit</button>
-                <button onClick={() => deleteHandle(record._id)}>Delete</button>
-              </Space>
-            )}
-          />
-        </Table>
+    <Card
+      title="Хэрэглэгч"
+      style={{ marginLeft: "20px" }}
+      extra={
+        <Button onClick={() => showModal(true)} icon={<PlusOutlined />}>
+          Хэрэглэгч нэмэх
+        </Button>
+      }
+    >
+      <Table dataSource={data}>
+        <Column title="Хэрэглэгчийн нэр" dataIndex="username" key="username" />
+        <Column title="role" dataIndex="role" key="role" />
+        <Column title="Email" dataIndex="email" key="email" />
+        <Column
+          title="Үйлдэл"
+          key="action"
+          render={(_, record) => (
+            <Space size="middle">
+              <button onClick={() => EditUserHandle(record)}>Засах</button>
+              <button onClick={() => deleteHandle(record._id)}>Устгах</button>
+            </Space>
+          )}
+        />
+      </Table>
 
-        <Modal
-          title={editUser ? "Хэрэглэгч засах" : "Хэрэглэгч бүртгэх"}
-          visible={visible}
-          okText={
-            editUser ? (
-              <h1 style={{ color: "white" }}>Засах</h1>
-            ) : (
-              <h1 style={{ color: "white" }}>Бүртгэх</h1>
-            )
-          }
-          onOk={editUser ? editUserApi : registerUser}
-          confirmLoading={confirmLoading}
-          onCancel={handleCancel}
+      <Modal
+        title={editUser ? "Хэрэглэгч засах" : "Хэрэглэгч бүртгэх"}
+        visible={visible}
+        okText={
+          editUser ? (
+            <h1 style={{ color: "white" }}>Засах</h1>
+          ) : (
+            <h1 style={{ color: "white" }}>Бүртгэх</h1>
+          )
+        }
+        onOk={editUser ? editUserApi : registerUser}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        {/* <Button onClick={handleResetForm}>Reset Form</Button> */}
+        <Form
+          form={form}
+          initialValues={{
+            username: "",
+            firstName: "",
+            password: "",
+            email: "",
+          }}
+          encType="multipart/formdata"
+          onFinish={editUser ? editUserApi : registerUser}
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          autoComplete="do-not-autofill"
         >
-          {/* <Button onClick={handleResetForm}>Reset Form</Button> */}
-          <Form
-            form={form}
-            initialValues={{
-              lastName: "",
-              firstName: "",
-              password: "",
-              email: "",
-            }}
-            encType="multipart/formdata"
-            onFinish={editUser ? editUserApi : registerUser}
-            labelCol={{
-              span: 8,
-            }}
+          <Form.Item
+            label="Username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            rules={[
+              {
+                required: true,
+                message: "Please input your Username!",
+              },
+            ]}
+          >
+            <Input placeholder="Username" autoComplete="off" />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Email!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Email"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="role"
+            name="role"
+            rules={[
+              {
+                required: true,
+                message: "Талбарыг бөглөнө үү",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Талбарыг бөглөнө үү"
+              autoComplete="off"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            />
+          </Form.Item>
+          {editUser === false && (
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Password!",
+                },
+              ]}
+            >
+              <Input.Password
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="off"
+              />
+            </Form.Item>
+          )}
+          <Form.Item
             wrapperCol={{
+              offset: 8,
               span: 16,
             }}
-            autoComplete="do-not-autofill"
           >
-            <Form.Item
-              label="Firstname"
-              name="firstName"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Firstname!",
-                },
-              ]}
-            >
-              <Input placeholder="Firstname" autoComplete="off" />
-            </Form.Item>
-
-            <Form.Item
-              label="Lastname"
-              name="lastName"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Lastname!",
-                },
-              ]}
-            >
-              <Input placeholder="Lastname" autoComplete="off" />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Email!",
-                },
-              ]}
-            >
-              <Input placeholder="Email" autoComplete="off" />
-            </Form.Item>
-            {editUser === false && (
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Password!",
-                  },
-                ]}
-              >
-                <Input.Password placeholder="password" autoComplete="off" />
-              </Form.Item>
+            {editUser ? (
+              <Button block type="primary" htmlType="submit">
+                Edit
+              </Button>
+            ) : (
+              <Button block type="primary" htmlType="submit">
+                Submit
+              </Button>
             )}
-            <Form.Item
-              wrapperCol={{
-                offset: 8,
-                span: 16,
-              }}
-            >
-              {editUser ? (
-                <Button block type="primary" htmlType="submit">
-                  Edit
-                </Button>
-              ) : (
-                <Button block type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              )}
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Card>
-    </div>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Card>
   );
 };
 

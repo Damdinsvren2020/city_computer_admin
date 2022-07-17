@@ -1,11 +1,14 @@
-import "./User.scss";
 import Navbar from "../../components/navbar/Navbar";
+import Sidebar from "../../components/sidebar/Sidebar";
 import Datatable from "../../components/datatable/Datatable";
 
 const User = () => {
   return (
-    <div className="User">
-      <div className="UserContainer">
+    <div className="flex ">
+      <div className=" flex flex-col h-screen">
+        <Sidebar />
+      </div>
+      <div className="w-full bg-white	">
         <Navbar />
         <Datatable />
       </div>
