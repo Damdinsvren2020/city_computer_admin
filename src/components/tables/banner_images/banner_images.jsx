@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, Dropdown, Button, Card, Modal } from "antd";
 import moment from "moment";
-import { LoadingOutlined, DownOutlined, PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, DownOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import MenuI from "./menu1/menu1";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -18,6 +18,7 @@ const Banner_images = () => {
   const [bannerEdit, setBannerEdit] = useState(false);
 
   const [name, setName] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const getBanner = async () => {
@@ -25,11 +26,12 @@ const Banner_images = () => {
       setBanner(data.result);
     };
     getBanner();
-  }, []);
+  }, [refreshKey]);
 
   const [orders, setOrders] = useState("");
   const [image2, setImage2] = useState(null);
   const [image, setImage] = useState(null);
+  const [newImage, setNewImage] = useState(false)
   const [imageNew1, setImageNew1] = useState(false);
 
   const registerBanner = async () => {
@@ -42,6 +44,7 @@ const Banner_images = () => {
       if (data.success) {
         resetForm();
         setCreateBannerModal(false);
+        setRefreshKey(old => old + 1)
         Swal.fire({
           icon: "success",
           title: "Added",
@@ -60,21 +63,17 @@ const Banner_images = () => {
       let formdata = new FormData();
       formdata.append("name", name);
       formdata.append("orders", orders);
+      newImage ? formdata.append("thumbnail", image[0]) : formdata.append("thumbnailOld", image)
+      newImage && formdata.append("newThumbnail", newImage)
 
-      formdata.append("thumbnail", image2[0]);
-
-      imageNew1
-        ? formdata.append("avatar", image2[0])
-        : formdata.append("avatarOld", image2);
-      imageNew1 && formdata.append("newAvatar", imageNew1);
-
-      const { data } = await axios.post(
+      const { data } = await axios.put(
         "/bannerimages/" + bannerEditId,
         formdata
       );
       if (data.success) {
         setEditLoading(false);
         resetForm();
+        setRefreshKey(old => old + 1)
         setCreateBannerModal(false);
         Swal.fire({
           icon: "success",
@@ -91,12 +90,52 @@ const Banner_images = () => {
     }
   };
 
+
+  const setEditModal = (banner) => {
+    setCreateBannerModal(true)
+    setBannerEdit(true)
+    setName(banner.name)
+    setOrders(banner.orders)
+    setImage(banner.thumbnail)
+    setBannerEditId(banner._id)
+  }
+
   const resetForm = () => {
-    setBanner([]);
     setName("");
     setOrders("");
     setImage(null);
   };
+
+  const setUpDelete = (banner) => {
+    Swal.fire({
+      title: `Та итгэлтэй байна уу ?`,
+      text: `${banner.name} ыг устгах гэж байна!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Болих',
+      confirmButtonText: 'Устгах'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await axios.delete("/bannerimages/" + banner._id)
+        if (data.success) {
+          setRefreshKey(old => old + 1)
+          setBannerEdit(false)
+          resetForm()
+          Swal.fire({
+            icon: "success",
+            title: 'Устгагдлаа!',
+          })
+        } else {
+          Swal.fire(
+            "Алдаа",
+            "error"
+          )
+        }
+      }
+    })
+  }
 
   const columns = [
     {
@@ -141,23 +180,12 @@ const Banner_images = () => {
       render: (text, record) => {
         return (
           <>
-            <Dropdown
-              disabled={record.loading}
-              trigger="click"
-              overlay={MenuI(record)}
-            >
-              <a
-                className="ant-dropdown-link"
-                onClick={(e) => e.preventDefault()}
-              >
-                Үйлдэл
-                {record.loading ? (
-                  <LoadingOutlined spin={true} />
-                ) : (
-                  <DownOutlined />
-                )}
-              </a>
-            </Dropdown>
+            <button className="text-yellow-500 text-xl mx-2" onClick={() => setEditModal(record)}>
+              <EditOutlined />
+            </button>
+            <button className="text-red-500 text-xl mx-2" onClick={() => setUpDelete(record)}>
+              <DeleteOutlined />
+            </button>
           </>
         );
       },
@@ -171,7 +199,10 @@ const Banner_images = () => {
       style={{ marginLeft: "20px" }}
       extra={
         <Button
-          onClick={() => setCreateBannerModal(true)}
+          onClick={() => {
+            setCreateBannerModal(true)
+            setBannerEdit(false)
+          }}
           icon={<PlusOutlined />}
         >
           Баннер нэмэх
@@ -180,18 +211,18 @@ const Banner_images = () => {
     >
       <Table size="small" columns={columns} dataSource={banner} />
       <Modal
-        title={editCategory ? "Ангилал засах" : "Баннер оруулах"}
+        title={bannerEdit ? "Баннер засах" : "Баннер оруулах"}
         visible={createBannerModal}
         confirmLoading={confirmLoading}
-        onCancel={() => setCreateBannerModal(false)}
+        onCancel={() => {
+          setCreateBannerModal(false)
+          resetForm()
+        }}
         okText={bannerEdit ? "Засах" : "Илгээх"}
         onOk={bannerEdit ? () => editBanner() : () => registerBanner()}
-        okButtonProps={{
-          disabled: true,
-        }}
       >
         <form>
-          <div>
+          <div className="w-full h-96">
             <input
               type={"text"}
               value={name}
@@ -211,8 +242,10 @@ const Banner_images = () => {
                 onChange={(e) => {
                   if (e.target?.files) {
                     setImage(e.target.files);
+                    setNewImage(true)
                   } else {
                     setImage(null);
+                    setNewImage(false)
                   }
                 }}
                 className="w-full p-2 border my-1"
@@ -220,19 +253,33 @@ const Banner_images = () => {
                 id="thumbnail"
                 placeholder="Зурагнууд"
               />
-              <img
-                src={
-                  image
-                    ? image
-                      ? URL.createObjectURL(image[0] && image[0])
-                      : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
-                    : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
-                }
-                alt="profile"
-                className="w-full h-full object-cover"
-              />
+              {
+                newImage ?
+                  <img
+                    src={
+                      image
+                        ? image
+                          ? URL.createObjectURL(image[0] && image[0])
+                          : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                        : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                    }
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                  :
+                  <img
+                    src={`${CDNURL}/${image}`}
+                    alt="banner"
+                    className="w-full h-full object-cover"
+                  />
+              }
             </div>
-            <Button onClick={() => registerBanner()}>Үүсгэх</Button>
+            {/* {
+              bannerEdit ?
+                <Button onClick={() => editBanner()}>Засах</Button>
+                :
+                <Button onClick={() => registerBanner()}>Үүсгэх</Button>
+            } */}
           </div>
         </form>
       </Modal>
