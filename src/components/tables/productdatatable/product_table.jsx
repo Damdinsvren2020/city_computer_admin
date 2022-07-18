@@ -46,6 +46,7 @@ const Datatable = () => {
   const [subID, setSubID] = useState("");
   const [openSelection, setOpenSelection] = useState(false);
   const [Step, setStep] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const getCategory = async () => {
@@ -64,7 +65,7 @@ const Datatable = () => {
       }
     };
     getProducts();
-  }, []);
+  }, [refreshKey]);
   useEffect(() => {
     axios
       .get("/brand")
@@ -76,7 +77,7 @@ const Datatable = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [refreshKey]);
 
   const [modalCatergory, setModalCategory] = useState([]);
 
@@ -122,6 +123,11 @@ const Datatable = () => {
 
   const [productSpecList, setProductSpecList] = useState([]);
 
+
+  const [editChooseAngilal, setEditChooseAngilal] = useState(false)
+  const [chooseAngilalModal, setChooseAngilalModal] = useState("")
+  const [cacheProduct, setCacheProduct] = useState([])
+
   const addSpecs = () => {
     setProductSpecList((current) => [
       ...current,
@@ -162,6 +168,7 @@ const Datatable = () => {
       const { data } = await axios.post("/product", formdata);
       if (data.success) {
         resetForm();
+        setRefreshKey(old => old + 1)
         setCreateProductModal(false);
         Swal.fire({
           icon: "success",
@@ -198,9 +205,19 @@ const Datatable = () => {
   };
 
   const setUpEditModal = async (item) => {
+    setCacheProduct(item)
+    if (item.SubID === null) {
+      setEditChooseAngilal(true)
+      setProductName(item.name)
+      setProductEditId(item._id)
+      return Swal.fire({
+        icon: "warning",
+        title: "Ангилал сонгож өгнө үү!"
+      })
+    }
     setEditLoading(true);
     setProductEditId(item._id);
-    setSubID(item.SubID._id);
+    setSubID(item?.SubID?._id);
     setImage1(item.avatar);
     setImage2(item.thumbnail);
     setImages(item.imagesProduct);
@@ -223,6 +240,21 @@ const Datatable = () => {
       setEditLoading(false);
     }
   };
+
+  const chooseAngilal = async () => {
+    let formdata = new FormData()
+    formdata.append("SubID", subID)
+    const { data } = await axios.post("/productChoseAngilal/" + productEditId, formdata)
+    if (data.success) {
+      setEditChooseAngilal(false)
+      setRefreshKey(old => old + 1)
+      // setUpEditModal(data.result)
+      Swal.fire({
+        icon: "success",
+        title: "Та одоо барааний засвараа хийж болно"
+      })
+    }
+  }
 
   const editProduct = async () => {
     try {
@@ -257,6 +289,7 @@ const Datatable = () => {
       if (data.success) {
         setEditLoading(false);
         resetForm();
+        setRefreshKey(old => old + 1)
         setCreateProductModal(false);
         Swal.fire({
           icon: "success",
@@ -272,6 +305,10 @@ const Datatable = () => {
       });
     }
   };
+
+  const editChosenAngilal = async () => {
+
+  }
 
   return (
     <Card
@@ -299,6 +336,7 @@ const Datatable = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell className="tableCell">Ангилал</TableCell>
               <TableCell className="tableCell">Зураг</TableCell>
               <TableCell className="tableCell">Нэр</TableCell>
               <TableCell className="tableCell">Тоо ширхэг</TableCell>
@@ -311,6 +349,13 @@ const Datatable = () => {
           <TableBody>
             {data.map((row) => (
               <TableRow key={row._id}>
+                <TableCell className="tableCell">
+                  <div>
+                    {
+                      row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"
+                    }
+                  </div>
+                </TableCell>
                 <TableCell className="tableCell">
                   <div>
                     <img
@@ -349,6 +394,72 @@ const Datatable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Modal
+        title={productName + "-ын " + "ангилал сонгох"}
+        width={1000}
+        onCancel={() => setEditChooseAngilal(false)}
+        okText={editChooseAngilal ? "Засах" : "Өөрчлөх"}
+        onOk={editChooseAngilal ? () => chooseAngilal() : () => editChosenAngilal()}
+        visible={editChooseAngilal}
+      >
+
+        <div className="w-full p-2 flex flex-col relative h-48">
+          <input
+            onChange={(e) => searchingCategory(e.target.value)}
+            onFocus={() => setOpenSelection(true)}
+            type={"search"}
+            className="border w-full p-2"
+            placeholder="Ангилал нэрээр хайх"
+          />
+          <div
+            className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
+              }`}
+          >
+            <div className="w-full flex-1 p-2 overflow-auto">
+              {filteredCategoryList?.map((item, index) => (
+                <div key={index} className="w-full p-2 flex flex-col">
+                  <button
+                    onClick={() => {
+                      setSubAngilalDrop(!subAngilalDrop);
+                      setMatchingIndex(index);
+                      setNameOfCategory(item.name);
+                    }}
+                    className="w-full p-2 hover:bg-gray-200 flex items-center text-lg"
+                  >
+                    {subAngilalDrop && matchingIndex === index ? (
+                      <UpOutlined />
+                    ) : (
+                      <DownOutlined />
+                    )}
+                    {item.name}
+                  </button>
+                  {subAngilalDrop && matchingIndex === index && (
+                    <div className="w-full pl-10 flex flex-col items-start h-[300px] overflow-auto">
+                      {item?.SubAngilal?.map((item, index) => (
+                        <button
+                          onClick={() => {
+                            setSubAngilalDrop(false);
+                            setNameOfCategorySub(item.name);
+                            setSubID(item._id);
+                            setOpenSelection(false);
+                          }}
+                          className=" hover:bg-gray-200 w-full flex items-start"
+                          key={index}
+                        >
+                          <h1 className="p-2">{item.name}</h1>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="text-xl">
+          Таны сонгосон категори:  {nameOfCategory}/{nameOfCategorySub}/{productName}
+        </div>
+      </Modal>
 
       <Modal
         title={"Бараа бүртгэх"}
@@ -371,9 +482,8 @@ const Datatable = () => {
               placeholder="Ангилал нэрээр хайх"
             />
             <div
-              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${
-                openSelection ? "scale-y-100" : "scale-y-0"
-              }`}
+              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
+                }`}
             >
               <div className="w-full flex-1 p-2 overflow-auto">
                 {filteredCategoryList?.map((item, index) => (
@@ -431,9 +541,8 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("first");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${
-                    Step === "first" ? "bg-blue-200" : "bg-gray-200"
-                  } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${Step === "first" ? "bg-blue-200" : "bg-gray-200"
+                    } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа
                 </div>
@@ -445,9 +554,8 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("second");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${
-                    Step === "second" ? "bg-blue-200" : "bg-gray-200"
-                  } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${Step === "second" ? "bg-blue-200" : "bg-gray-200"
+                    } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа үзүүлэлт
                 </div>
@@ -459,9 +567,8 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("third");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${
-                    Step === "third" ? "bg-blue-200" : "bg-gray-200"
-                  } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${Step === "third" ? "bg-blue-200" : "bg-gray-200"
+                    } flex justify-center items-center cursor-pointer`}
                 >
                   Барааний зураг
                 </div>
@@ -473,9 +580,8 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("final");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${
-                    Step === "final" ? "bg-blue-200" : "bg-gray-200"
-                  } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${Step === "final" ? "bg-blue-200" : "bg-gray-200"
+                    } flex justify-center items-center cursor-pointer`}
                 >
                   Эцэс
                 </div>

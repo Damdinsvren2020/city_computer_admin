@@ -4,7 +4,7 @@ import "./category_table.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { Form, Button, Card } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -22,10 +22,12 @@ const Datatable = () => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [editCategory, seteditCategory] = useState(false);
+  const [editCategoryId, setEditCategoryId] = useState("")
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [angilal, setAngilal] = useState([]);
   const [image, setImage] = useState(null);
+  const [newImage, setNewImage] = useState(false)
 
   const [dropDownAngilal, setDropDownAngilal] = useState(false);
   const [matchingIndex, setMatchingIndex] = useState("");
@@ -39,6 +41,7 @@ const Datatable = () => {
         const data = response.data.data;
         setAngilal(data);
         setFilteredCategory(data);
+        console.log(data)
       })
       .catch((error) => {
         console.log(error);
@@ -48,12 +51,21 @@ const Datatable = () => {
   const showModal = () => {
     setVisible(true);
     seteditCategory(false);
-    form.resetFields();
+
   };
   const handleCancel = () => {
     setVisible(false);
-    form.resetFields();
+
   };
+
+  const setUpEditCategory = (category) => {
+    seteditCategory(true)
+    setVisible(true)
+    setEditCategoryId(category._id)
+    setName(category.name)
+    setDescription(category.description)
+    setImage(category.link)
+  }
 
   const Categorycreate = async () => {
     try {
@@ -66,6 +78,7 @@ const Datatable = () => {
         setVisible(false);
         setConfirmLoading(false);
         setRefreshKey((old) => old + 1);
+        resetCategory()
         new Swal({
           icon: "success",
           title: data.result,
@@ -88,9 +101,71 @@ const Datatable = () => {
     }
   };
 
+  const CategoryEdit = async () => {
+    try {
+      let formdata = new FormData();
+      formdata.append("name", Name);
+      formdata.append("description", Description);
+      newImage ? formdata.append("avatar", image[0]) : formdata.append("avatarOld", image)
+      newImage && formdata.append("newAvatar", newImage)
+      const { data } = await axios.put("/angilal/" + editCategoryId, formdata);
+      if (data.success) {
+        resetCategory()
+        seteditCategory(false)
+        setVisible(false)
+        setRefreshKey(old => old + 1)
+        new Swal({
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      new Swal({
+        icon: "error",
+      });
+    }
+  }
+
+  const categoryDelete = async (category) => {
+    Swal.fire({
+      title: `Та итгэлтэй байна уу ?`,
+      text: `${category.name} ыг устгах гэж байна!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Болих',
+      confirmButtonText: 'Устгах'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await axios.delete("/angilal/" + category._id)
+        if (data.success) {
+          setRefreshKey(old => old + 1)
+          Swal.fire({
+            icon: "success",
+            title: 'Устгагдлаа!',
+          })
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: data.result,
+            text: data.description
+          })
+        }
+      }
+    })
+  }
+
+  const resetCategory = () => {
+    setName("")
+    setDescription("")
+    setImage(null)
+  }
+
   const [subAngilalName, setSubAngilalName] = useState("");
   const [subAngilalDesc, setSubAngilalDesc] = useState("");
   const [FilteredCategory, setFilteredCategory] = useState([]);
+  const [editSubAngilal, setEditSubAngilal] = useState(false)
+  const [editSubAngilalId, setEditSubAngilalId] = useState("")
 
   const createSubAngilal = async (id) => {
     try {
@@ -133,12 +208,80 @@ const Datatable = () => {
     }
   };
 
+  const setUpEditSub = (sub) => {
+    setSubAngilalName(sub.name)
+    setSubAngilalDesc(sub.content)
+    setEditSubAngilal(true)
+    setEditSubAngilalId(sub._id)
+  }
+
+  const resetSubAngilalForm = () => {
+    setSubAngilalDesc("")
+    setSubAngilalName("")
+    setEditSubAngilal(false)
+    setEditSubAngilalId("")
+  }
+
+  const SubAngilalEdit = async () => {
+    try {
+      let formdata = new FormData();
+      formdata.append("name", subAngilalName);
+      formdata.append("content", subAngilalDesc);
+      const { data } = await axios.put("/subangilal/" + editSubAngilalId, formdata)
+      if (data.success) {
+        resetSubAngilalForm()
+        setRefreshKey(old => old + 1)
+        Swal.fire({
+          icon: "success",
+        })
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+      })
+    }
+  }
+
+  const deleteSubAngilal = async (sub) => {
+    Swal.fire({
+      title: `Та итгэлтэй байна уу ?`,
+      text: `${sub.name} ыг устгах гэж байна!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Болих',
+      confirmButtonText: 'Устгах'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await axios.delete("/subangilal/" + sub._id)
+        if (data.success) {
+          setRefreshKey(old => old + 1)
+          Swal.fire({
+            icon: "success",
+            title: 'Устгагдлаа!',
+          })
+        } else {
+          Swal.fire(
+            "Алдаа",
+            "error"
+          )
+        }
+      }
+    })
+
+  }
+
   return (
     <Card
       style={{ marginLeft: "20px" }}
       extra={
-        <Button onClick={() => showModal(true)} icon={<PlusOutlined />}>
-          Баннер нэмэх
+        <Button onClick={() => {
+          showModal(true)
+          seteditCategory(false)
+          resetCategory()
+        }} icon={<PlusOutlined />}>
+          Категори нэмэх
         </Button>
       }
     >
@@ -167,6 +310,16 @@ const Datatable = () => {
                     {row.product}
                   </div>
                 </TableCell>
+                <TableCell className="tableCell">
+                  <div className="cellWrapper">
+                    <button onClick={() => setUpEditCategory(row)} className="text-yellow-500 text-xl mx-2">
+                      <EditOutlined />
+                    </button>
+                    <button onClick={() => categoryDelete(row)} className="text-red-500 text-xl mx-2">
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -179,13 +332,12 @@ const Datatable = () => {
         visible={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        okButtonProps={{
-          disabled: true,
-        }}
+        okText={editCategory ? "Засах" : "Үүсгэх"}
+        onOk={editCategory ? () => CategoryEdit() : () => Categorycreate()}
       >
-        <div className="w-full flex ">
+        <div className={`w-full flex ${editCategory && "h-96"}`}>
           <div className="w-3/6 flex justify-center items-center">
-            <div className="w-full h-48">
+            <div className="w-full">
               <input
                 onChange={(e) => {
                   if (e.target?.value) {
@@ -194,12 +346,14 @@ const Datatable = () => {
                     setName(null);
                   }
                 }}
+                value={Name}
                 className="w-full p-2 border my-1"
                 type="text"
                 id="name"
                 placeholder="name"
               />
               <input
+                value={Description}
                 onChange={(e) => {
                   if (e.target?.value) {
                     setDescription(e.target.value);
@@ -212,106 +366,113 @@ const Datatable = () => {
                 id="description"
                 placeholder="description"
               />
-              <input
-                onChange={(e) => {
-                  if (e.target?.files) {
-                    setImage(e.target.files);
-                  } else {
-                    setImage(null);
-                  }
-                }}
-                className="w-full p-2 border my-1"
-                type="file"
-                id="avatar"
-                placeholder="Зурагнууд"
-              />
-              <img
-                src={
-                  image
-                    ? image
-                      ? URL.createObjectURL(image[0] && image[0])
-                      : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
-                    : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+              <div className="w-full flex flex-wrap gap-2 mt-4 w-48 h-48">
+                <input
+                  onChange={(e) => {
+                    if (e.target?.files) {
+                      setImage(e.target.files);
+                      setNewImage(true)
+                    } else {
+                      setImage(null);
+                      setNewImage(false)
+                    }
+                  }}
+                  className="w-full p-2 border my-1"
+                  type="file"
+                  id="thumbnail"
+                  placeholder="Зурагнууд"
+                />
+                {
+                  newImage ?
+                    <img
+                      src={
+                        image
+                          ? image
+                            ? URL.createObjectURL(image[0] && image[0])
+                            : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                          : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                      }
+                      alt="profile"
+                      className="w-full h-full object-cover"
+                    />
+                    :
+                    <img
+                      src={`${CDNURL}/${image}`}
+                      alt="banner"
+                      className="w-full h-full object-cover"
+                    />
                 }
-                alt="profile"
-                className="w-full h-full object-cover"
-              />
-              {editCategory ? (
-                <Button type="primary" htmlType="Үүсгэх">
-                  Edit
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => Categorycreate()}
-                  type="primary"
-                  htmlType="Үүсгэх"
-                >
-                  Үүсгэх
-                </Button>
-              )}
+              </div>
             </div>
           </div>
-          <div className="w-3/6">
-            <input
-              autoCapitalize="none"
-              onChange={(e) => searchingCategory(e.target.value)}
-              type={"search"}
-              className="w-full p-2 border rounded-sm"
-              placeholder="Ангилал хайх"
-            />
-            <div className="w-full h-[700px] overflow-auto">
-              {FilteredCategory.map((item, index) => (
-                <div key={index} className="w-full border p-2 my-2 mx-auto">
-                  <button
-                    onClick={() => {
-                      setDropDownAngilal(true);
-                      setMatchingIndex(index);
-                    }}
-                    className="w-full flex flex-row gap-2 items-center"
-                  >
-                    <h1 className="text-black text-lg">
-                      <PlusOutlined />
-                    </h1>
-                    <h1 className="text-black text-lg">{item.name}</h1>
-                  </button>
-                  {matchingIndex === index && dropDownAngilal && (
-                    <div className="w-full h-96 overflow-auto">
-                      <div className="w-full flex flex-col gap-1">
-                        <div className="w-full flex flex-col gap-2">
-                          <input
-                            value={subAngilalName}
-                            onChange={(e) => setSubAngilalName(e.target.value)}
-                            className="w-full border p-2"
-                            placeholder="Дэд ангилал нэр"
-                          />
-                          <input
-                            value={subAngilalDesc}
-                            onChange={(e) => setSubAngilalDesc(e.target.value)}
-                            className="w-full border p-2"
-                            placeholder="Дэд ангилал тайлбар"
-                          />
-                          <button
-                            onClick={() => createSubAngilal(item._id)}
-                            className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
-                          >
-                            {" "}
-                            <PlusOutlined />
-                          </button>
-                        </div>
-                        <div className="w-full ">
-                          {item?.SubAngilal?.map((item, index) => (
-                            <div className="w-full p-2 hover:bg-gray-200">
-                              <h1>{item.name}</h1>
-                            </div>
-                          ))}
+          {
+            editCategory === false &&
+            <div className="w-3/6">
+              <input
+                autoCapitalize="none"
+                onChange={(e) => searchingCategory(e.target.value)}
+                type={"search"}
+                className="w-full p-2 border rounded-sm"
+                placeholder="Ангилал хайх"
+              />
+              <div className="w-full h-[700px] overflow-auto">
+                {FilteredCategory.map((item, index) => (
+                  <div key={index} className="w-full border p-2 my-2 mx-auto">
+                    <button
+                      onClick={() => {
+                        setDropDownAngilal(true);
+                        setMatchingIndex(index);
+                      }}
+                      className="w-full flex flex-row gap-2 items-center"
+                    >
+                      <h1 className="text-black text-lg">
+                        <PlusOutlined />
+                      </h1>
+                      <h1 className="text-black text-lg">{item.name}</h1>
+                    </button>
+                    {matchingIndex === index && dropDownAngilal && (
+                      <div className="w-full h-96 overflow-auto">
+                        <div className="w-full flex flex-col gap-1">
+                          <div className="w-full flex flex-col gap-2">
+                            <input
+                              value={subAngilalName}
+                              onChange={(e) => setSubAngilalName(e.target.value)}
+                              className="w-full border p-2"
+                              placeholder="Дэд ангилал нэр"
+                            />
+                            <input
+                              value={subAngilalDesc}
+                              onChange={(e) => setSubAngilalDesc(e.target.value)}
+                              className="w-full border p-2"
+                              placeholder="Дэд ангилал тайлбар"
+                            />
+                            <button
+                              onClick={editSubAngilal ? () => SubAngilalEdit() : () => createSubAngilal(item._id)}
+                              className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
+                            >
+                              {" "}
+                              {
+                                editSubAngilal ? <EditOutlined /> : <PlusOutlined />
+                              }
+                            </button>
+                          </div>
+                          <div className="w-full ">
+                            {item?.SubAngilal?.map((item, index) => (
+                              <div className="w-full p-2 hover:bg-gray-200 flex justify-between ">
+                                <h1>{item.name}</h1>
+                                <button onClick={() => setUpEditSub(item)}>Edit</button>
+                                <button onClick={() => deleteSubAngilal(item)}>Delete</button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          }
         </div>
       </Modal>
     </Card>
