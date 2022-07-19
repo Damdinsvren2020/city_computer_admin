@@ -10,6 +10,7 @@ import {
   MinusCircleOutlined,
   EditOutlined,
   LoadingOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
@@ -30,6 +31,8 @@ import "swiper/css/navigation";
 import "./styles.css";
 import { CDNURL } from "../../../CDNURL";
 
+import { FaPercent, } from "react-icons/fa"
+
 // const { Column, ColumnGroup } = Table;
 
 const Datatable = () => {
@@ -47,6 +50,8 @@ const Datatable = () => {
   const [openSelection, setOpenSelection] = useState(false);
   const [Step, setStep] = useState("");
   const [refreshKey, setRefreshKey] = useState(0)
+
+  const [onSaleModal, setOnSaleModal] = useState(false)
 
   useEffect(() => {
     const getCategory = async () => {
@@ -310,6 +315,67 @@ const Datatable = () => {
 
   }
 
+  const deleteProduct = async (product) => {
+    Swal.fire({
+      title: `Та итгэлтэй байна уу ?`,
+      text: `${product.name} ыг устгах гэж байна!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Болих',
+      confirmButtonText: 'Устгах'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await axios.delete("/product/" + product._id)
+        if (data.success) {
+          setRefreshKey(old => old + 1)
+          Swal.fire({
+            icon: "success",
+            title: 'Устгагдлаа!',
+          })
+        } else {
+          Swal.fire({
+            icon: "error",
+          })
+        }
+      }
+    })
+  }
+
+  const [saleProductName, setSaleProductName] = useState("")
+  const [saleProductPrice, setSaleProductPrice] = useState("")
+  const [saleProductID, setSaleProductID] = useState("")
+  const [saleProductOffer, setSaleProductOffer] = useState(0)
+
+  const onSaleProduct = (product) => {
+    setOnSaleModal(true)
+    setSaleProductName(product.name)
+    setSaleProductPrice(product.price)
+    setSaleProductID(product._id)
+    setSaleProductOffer(product?.offer)
+  }
+
+  const resetSale = () => {
+    setSaleProductPrice("")
+    setSaleProductID("")
+    setSaleProductName("")
+    setSaleProductOffer("")
+  }
+
+  const saveSelectedProductSale = async () => {
+    const { data } = await axios.post("/productSale/" + saleProductID, { offer: saleProductOffer })
+    if (data.success) {
+      resetSale()
+      setRefreshKey(old => old + 1)
+      setOnSaleModal(false)
+      Swal.fire({
+        icon: "success",
+        title: "Хадгалсан"
+      })
+    }
+  }
+
   return (
     <Card
       title="Бүтээгдхүүн"
@@ -342,6 +408,7 @@ const Datatable = () => {
               <TableCell className="tableCell">Тоо ширхэг</TableCell>
               <TableCell className="tableCell">Тайлбар</TableCell>
               <TableCell className="tableCell">Үнэ</TableCell>
+              <TableCell className="tableCell">Хямдрал</TableCell>
               <TableCell className="tableCell">SKU</TableCell>
               <TableCell className="tableCell">Үйлдэл</TableCell>
             </TableRow>
@@ -353,6 +420,11 @@ const Datatable = () => {
                   <div>
                     {
                       row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"
+                    }
+                  </div>
+                  <div>
+                    {
+                      row?.SubID?.name
                     }
                   </div>
                 </TableCell>
@@ -377,6 +449,14 @@ const Datatable = () => {
                 </TableCell>
                 <TableCell className="tableCell">
                   <h2>{row.price}</h2>
+                  {
+                    row.offer && <h2 className="text-red-500">{Math.round(row.price - (row.price * row.offer / 100))}</h2>
+                  }
+                </TableCell>
+                <TableCell className="tableCell">
+                  <button onClick={() => onSaleProduct(row)} className="text-xl text-red-500">
+                    <FaPercent />
+                  </button>
                 </TableCell>
                 <TableCell className="tableCell">
                   <h2>{row.SKU}</h2>
@@ -388,6 +468,13 @@ const Datatable = () => {
                   >
                     <EditOutlined />
                   </button>
+                  <button
+                    onClick={() => deleteProduct(row)}
+                    className="text-xl text-red-500"
+                  >
+                    <DeleteOutlined />
+                  </button>
+
                 </TableCell>
               </TableRow>
             ))}
@@ -459,6 +546,54 @@ const Datatable = () => {
         <div className="text-xl">
           Таны сонгосон категори:  {nameOfCategory}/{nameOfCategorySub}/{productName}
         </div>
+      </Modal>
+      <Modal
+        title="Хямдрал"
+        visible={onSaleModal}
+        okText={"Хадгалах"}
+        cancelText={"Болих"}
+        onOk={
+          () => saveSelectedProductSale()
+        }
+        onCancel={
+          () => {
+            setOnSaleModal(false)
+            resetSale()
+          }
+        }
+      >
+        <h1 className="text-center text-red-400">
+          Анхаар та хямдарсан үнийг сайн шалгаад хадгална уу!
+        </h1>
+        <h1 className="text-center text-red-400">
+          100 гэж бичсэн тохиолдолд 100% буюу бүрэн хямдарсан гэж үзнэ
+        </h1>
+        <h1>
+          Нэр-{saleProductName}
+        </h1>
+        <h1>
+          Үнэ-{saleProductPrice}
+        </h1>
+        <input maxlength="3" value={saleProductOffer} onChange={(e) => {
+          const limit = 3;
+          setSaleProductOffer(e.target.value.slice(0, limit))
+          if (e.target.value >= 100) {
+            setSaleProductOffer("")
+            Swal.fire({
+              icon: "warning",
+              title: "100% гаас доош байх хэрэгтэй"
+            })
+          }
+        }} placeholder="Хямдралын хувь" type={"number"} className="p-2 border w-full my-2" />
+        <h1>
+          Хямдарч байгаа хувь-{saleProductOffer && saleProductOffer + "%"}
+        </h1>
+        <h1>
+          Хямдарч байгаа үнэ-{Math.round(saleProductPrice * saleProductOffer / 100)}
+        </h1>
+        <h1>
+          Хямдарсаны дараах үнэ-{Math.round(saleProductPrice - (saleProductPrice * saleProductOffer / 100))}
+        </h1>
       </Modal>
 
       <Modal

@@ -7,6 +7,7 @@ import {
   RiFilter2Line,
   RiImageFill,
   RiShoppingBagFill,
+  RiCoupon3Fill
 } from "react-icons/ri";
 
 // import Imagesss from "./logo-1.png";
@@ -50,6 +51,11 @@ const Sidebar = () => {
             <Menu.Item icon={<RiShoppingBagFill />} key="product">
               <Link to="/product">
                 <span>Бүтээгдхүүн</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiCoupon3Fill />} key="coupon">
+              <Link to="/coupon">
+                <span>Купон</span>
               </Link>
             </Menu.Item>
           </Menu.ItemGroup>

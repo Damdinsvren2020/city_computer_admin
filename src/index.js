@@ -17,6 +17,7 @@ import User from "./pages/users/User";
 import Product from "./pages/product/product";
 
 import axios from "axios";
+import Coupon from "./pages/coupon/coupon";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -45,6 +46,7 @@ ReactDOM.render(
         <Route path="/category" element={<Category />} />
         <Route path="/user" element={<User />} />
         <Route path="/product" element={<Product />} />
+        <Route path="/coupon" element={<Coupon />} />
       </Routes>
     </BrowserRouter>
   </Provider>,
