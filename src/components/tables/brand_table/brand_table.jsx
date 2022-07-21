@@ -11,7 +11,7 @@ import {
   DownOutlined,
   PlusOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from "@ant-design/icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -34,12 +34,12 @@ const Datatable = () => {
   const [brand, setBrand] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [editBrand, setEditBrand] = useState(false)
-  const [editBrandId, setEditBrandId] = useState("")
-  const [image, setImage] = useState(null)
-  const [newImage, setNewImage] = useState(false)
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
+  const [editBrand, setEditBrand] = useState(false);
+  const [editBrandId, setEditBrandId] = useState("");
+  const [image, setImage] = useState(null);
+  const [newImage, setNewImage] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     axios
@@ -55,19 +55,17 @@ const Datatable = () => {
 
   const showModal = () => {
     setVisible(true);
-
   };
   const handleCancel = () => {
     setVisible(false);
-
   };
 
   const createBrand = async () => {
     try {
-      let formdata = new FormData()
-      formdata.append("name", name)
-      formdata.append("description", description)
-      formdata.append("thumbnail", image[0])
+      let formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("description", description);
+      formdata.append("thumbnail", image[0]);
       const { data } = await axios.post("/brand/image", formdata);
       if (data.success) {
         setVisible(false);
@@ -97,12 +95,12 @@ const Datatable = () => {
 
   const setUpBrandEdit = async (brand) => {
     setEditBrandId(brand._id);
-    setName(brand.name)
-    setDescription(brand.description)
-    setImage(brand.link)
+    setName(brand.name);
+    setDescription(brand.description);
+    setImage(brand.link);
     setVisible(true);
-    setEditBrand(true)
-    setNewImage(false)
+    setEditBrand(true);
+    setNewImage(false);
   };
 
   const editBrandHandler = async () => {
@@ -111,12 +109,11 @@ const Datatable = () => {
       let formdata = new FormData();
       formdata.append("name", name);
       formdata.append("description", description);
-      newImage ? formdata.append("thumbnail", image[0]) : formdata.append("thumbnailOld", image)
-      newImage && formdata.append("newThumbnail", newImage)
-      const { data } = await axios.put(
-        `brand/${editBrandId}`,
-        formdata
-      );
+      newImage
+        ? formdata.append("thumbnail", image[0])
+        : formdata.append("thumbnailOld", image);
+      newImage && formdata.append("newThumbnail", newImage);
+      const { data } = await axios.put(`brand/${editBrandId}`, formdata);
       if (data.success) {
         setRefreshKey((old) => old + 1);
         setVisible(false);
@@ -149,38 +146,35 @@ const Datatable = () => {
     Swal.fire({
       title: `Та итгэлтэй байна уу ?`,
       text: `${brand.name} ыг устгах гэж байна!`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Болих',
-      confirmButtonText: 'Устгах'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Болих",
+      confirmButtonText: "Устгах",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const { data } = await axios.delete(`/brand/${brand._id}`);
         if (data.success) {
-          setRefreshKey(old => old + 1)
-          resetform()
-          setEditBrand(false)
+          setRefreshKey((old) => old + 1);
+          resetform();
+          setEditBrand(false);
           Swal.fire({
             icon: "success",
-            title: 'Устгагдлаа!',
-          })
+            title: "Устгагдлаа!",
+          });
         } else {
-          Swal.fire(
-            "Алдаа",
-            "error"
-          )
+          Swal.fire("Алдаа", "error");
         }
       }
-    })
+    });
   };
 
   const resetform = () => {
-    setName("")
-    setDescription("")
-    setImage(null)
-  }
+    setName("");
+    setDescription("");
+    setImage(null);
+  };
 
   const props = {
     name: "image",
@@ -259,11 +253,14 @@ const Datatable = () => {
     <Card
       style={{ marginLeft: "20px" }}
       extra={
-        <Button onClick={() => {
-          showModal(true)
-          setEditBrand(false)
-          resetform()
-        }} icon={<PlusOutlined />}>
+        <Button
+          onClick={() => {
+            showModal(true);
+            setEditBrand(false);
+            resetform();
+          }}
+          icon={<PlusOutlined />}
+        >
           Баннер нэмэх
         </Button>
       }
@@ -285,15 +282,25 @@ const Datatable = () => {
                 </TableCell>
                 <TableCell className="tableCell">
                   <div>
-                    <img src={`${CDNURL}/${row.link}`} alt="" className="image w-48 h-48 object-contain" />
+                    <img
+                      src={`${CDNURL}/${row.link}`}
+                      alt=""
+                      className="image w-48 h-48 object-contain"
+                    />
                   </div>
                 </TableCell>
                 <TableCell className="tableCell">
                   <div>
-                    <button onClick={() => setUpBrandEdit(row)} className="text-yellow-500 text-xl mx-2">
+                    <button
+                      onClick={() => setUpBrandEdit(row)}
+                      className="text-yellow-500 text-xl mx-2"
+                    >
                       <EditOutlined />
                     </button>
-                    <button onClick={() => deleteHandler(row)} className="text-red-500 text-xl mx-2">
+                    <button
+                      onClick={() => deleteHandler(row)}
+                      className="text-red-500 text-xl mx-2"
+                    >
                       <DeleteOutlined />
                     </button>
                   </div>
@@ -333,10 +340,10 @@ const Datatable = () => {
               onChange={(e) => {
                 if (e.target?.files) {
                   setImage(e.target.files);
-                  setNewImage(true)
+                  setNewImage(true);
                 } else {
                   setImage(null);
-                  setNewImage(false)
+                  setNewImage(false);
                 }
               }}
               className="w-full p-2 border my-1"
@@ -344,30 +351,27 @@ const Datatable = () => {
               id="thumbnail"
               placeholder="Зурагнууд"
             />
-            {
-              newImage ?
-                <img
-                  src={
-                    image
-                      ? image
-                        ? URL.createObjectURL(image[0] && image[0])
-                        : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+            {newImage ? (
+              <img
+                src={
+                  image
+                    ? image
+                      ? URL.createObjectURL(image[0] && image[0])
                       : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
-                  }
-                  alt="profile"
-                  className="w-full h-full object-cover"
-                />
-                :
-                <img
-                  src={`${CDNURL}/${image}`}
-                  alt="banner"
-                  className="w-full h-full object-cover"
-                />
-            }
+                    : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                }
+                alt="profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src={`${CDNURL}/${image}`}
+                alt="banner"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
         </div>
-
-
       </Modal>
     </Card>
   );

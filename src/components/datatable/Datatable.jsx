@@ -15,13 +15,15 @@ const Datatable = () => {
 
   const [visible, setVisible] = useState(false);
   const [editUser, setEditUser] = useState(false);
-  const [editUserId, setEditUserId] = useState("");
+  const [userEditId, setUserEditId] = useState("");
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+  const [editUserId, setEditUserId] = useState("");
 
   useEffect(() => {
     const getUsersFromApi = async () => {
@@ -55,6 +57,12 @@ const Datatable = () => {
   };
   const handleResetForm = () => {
     form.resetFields();
+  };
+
+  const resetForm = () => {
+    setUsername("");
+    setEmail("");
+    setPassword("");
   };
 
   const registerUser = async (userRegisteration) => {
@@ -92,71 +100,68 @@ const Datatable = () => {
     console.log(user);
     form.setFieldsValue({
       email: user.email,
-      firstName: user.firstName,
+      role: user.role,
       username: user.username,
+      password: user.password,
     });
     setVisible(true);
     setEditUser(true);
   };
 
-  const editUserApi = async (userEditedForm) => {
-    setConfirmLoading(true);
+  const editUsersok = async () => {
     try {
-      const { data } = await axios.post(
-        `/updateUser/${editUserId}`,
-        userEditedForm
-      );
+      let formdata = new FormData();
+      formdata.append("username", username);
+      formdata.append("email", email);
+      formdata.append("role", role);
+      formdata.append("password", password);
+      const { data } = await axios.put("/usersEdit/" + editUserId, formdata);
       if (data.success) {
-        setEditUserId(false);
-        setEditUser(false);
+        setEditLoading(false);
+        resetForm();
         setRefreshKey((old) => old + 1);
-        setVisible(false);
-        setConfirmLoading(false);
-        form.resetFields();
-        new Swal({
+        showModal(false);
+        Swal.fire({
           icon: "success",
-          title: data.result,
-        });
-      }
-      if (!data.success) {
-        setConfirmLoading(false);
-        new Swal({
-          icon: "error",
-          title: data.result,
+          title: "Засагдлаа",
         });
       }
     } catch (error) {
-      setConfirmLoading(false);
-      console.log(error);
-      new Swal({
+      setEditLoading(false);
+      Swal.fire({
         icon: "error",
-        title: "Хэрэглэгчийн мэдээлэл засахад алдаа гарлаа",
+        title: "Алдаа гарлаа",
+        text: error.message,
       });
     }
   };
 
-  const deleteHandle = async (userId) => {
-    try {
-      const { data } = await axios.delete(`/deleteUser/${userId}`);
-      if (data.success) {
-        setRefreshKey((old) => old + 1);
-        new Swal({
-          icon: "success",
-          title: data.result,
-        });
+  const deleteHandler = async (user) => {
+    Swal.fire({
+      title: `Та итгэлтэй байна уу ?`,
+      text: `${user.username} ыг устгах гэж байна!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Болих",
+      confirmButtonText: "Устгах",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await axios.delete(`/usersdelete/${user._id}`);
+        console.log("dattt", data);
+        if (data.success) {
+          setRefreshKey((old) => old + 1);
+          setEditUserId(false);
+          Swal.fire({
+            icon: "success",
+            title: "Устгагдлаа!",
+          });
+        } else {
+          Swal.fire("Алдаа", "error");
+        }
       }
-      if (!data.success) {
-        new Swal({
-          icon: "error",
-          title: data.result,
-        });
-      }
-    } catch (error) {
-      new Swal({
-        icon: "error",
-        title: "Хэрэглэгч устгахад алдаа гарлаа",
-      });
-    }
+    });
   };
 
   return (
@@ -173,13 +178,14 @@ const Datatable = () => {
         <Column title="Хэрэглэгчийн нэр" dataIndex="username" key="username" />
         <Column title="role" dataIndex="role" key="role" />
         <Column title="Email" dataIndex="email" key="email" />
+
         <Column
           title="Үйлдэл"
           key="action"
           render={(_, record) => (
             <Space size="middle">
               <button onClick={() => EditUserHandle(record)}>Засах</button>
-              <button onClick={() => deleteHandle(record._id)}>Устгах</button>
+              <button onClick={() => deleteHandler(record)}>Устгах</button>
             </Space>
           )}
         />
@@ -195,7 +201,7 @@ const Datatable = () => {
             <h1 style={{ color: "white" }}>Бүртгэх</h1>
           )
         }
-        onOk={editUser ? editUserApi : registerUser}
+        onOk={editUser ? editUsersok : registerUser}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
@@ -209,7 +215,7 @@ const Datatable = () => {
             email: "",
           }}
           encType="multipart/formdata"
-          onFinish={editUser ? editUserApi : registerUser}
+          onFinish={editUser ? editUsersok : registerUser}
           labelCol={{
             span: 8,
           }}
@@ -266,25 +272,25 @@ const Datatable = () => {
               onChange={(e) => setRole(e.target.value)}
             />
           </Form.Item>
-          {editUser === false && (
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Password!",
-                },
-              ]}
-            >
-              <Input.Password
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="off"
-              />
-            </Form.Item>
-          )}
+
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Password!",
+              },
+            ]}
+          >
+            <Input.Password
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
+            />
+          </Form.Item>
+
           <Form.Item
             wrapperCol={{
               offset: 8,
