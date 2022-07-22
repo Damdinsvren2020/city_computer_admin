@@ -27,7 +27,7 @@ const Coupon = () => {
               return history("/home");
             }
             if (data.role === "admin") {
-              return history("/home");
+              return history("/coupon");
             }
           } else {
             history("/Login");
