@@ -66,7 +66,6 @@ const Datatable = () => {
       const { data } = await axios.get("/product");
       if (data.success) {
         setData(data.result);
-        console.log(data.result);
       }
     };
     getProducts();
