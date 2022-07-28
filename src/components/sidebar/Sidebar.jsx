@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { PlusOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import {
   RiBriefcase3Line,
   RiFilter2Line,
   RiImageFill,
   RiShoppingBagFill,
-  RiCoupon3Fill
+  RiCoupon3Fill,
+  RiFilePaper2Line,
+  RiNewspaperFill,
+  RiExchangeDollarFill,
 } from "react-icons/ri";
 
 // import Imagesss from "./logo-1.png";
@@ -56,6 +59,30 @@ const Sidebar = () => {
             <Menu.Item icon={<RiCoupon3Fill />} key="coupon">
               <Link to="/coupon">
                 <span>Купон</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiFilePaper2Line />} key="order">
+              <Link to="/order">
+                <span>Захиалга</span>
+              </Link>
+            </Menu.Item>
+          </Menu.ItemGroup>
+          <Menu.ItemGroup key="g1" title="Мэдээ">
+            <Menu.Item icon={<RiNewspaperFill />} key="news_category">
+              <Link to="/news_category">
+                <span>Ангилал</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item icon={<RiNewspaperFill />} key="news">
+              <Link to="/news">
+                <span>Мэдээ</span>
+              </Link>
+            </Menu.Item>
+          </Menu.ItemGroup>
+          <Menu.ItemGroup key="g1" title="Онлайн лизинг">
+            <Menu.Item icon={<RiExchangeDollarFill />} key="online_credit">
+              <Link to="/online_credit">
+                <span>Онлайн лизинг</span>
               </Link>
             </Menu.Item>
           </Menu.ItemGroup>

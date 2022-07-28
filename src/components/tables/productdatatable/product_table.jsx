@@ -10,7 +10,7 @@ import {
   MinusCircleOutlined,
   EditOutlined,
   LoadingOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
@@ -31,7 +31,7 @@ import "swiper/css/navigation";
 import "./styles.css";
 import { CDNURL } from "../../../CDNURL";
 
-import { FaPercent, } from "react-icons/fa"
+import { FaPercent } from "react-icons/fa";
 
 // const { Column, ColumnGroup } = Table;
 
@@ -49,9 +49,9 @@ const Datatable = () => {
   const [subID, setSubID] = useState("");
   const [openSelection, setOpenSelection] = useState(false);
   const [Step, setStep] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const [onSaleModal, setOnSaleModal] = useState(false)
+  const [onSaleModal, setOnSaleModal] = useState(false);
 
   useEffect(() => {
     const getCategory = async () => {
@@ -128,10 +128,9 @@ const Datatable = () => {
 
   const [productSpecList, setProductSpecList] = useState([]);
 
-
-  const [editChooseAngilal, setEditChooseAngilal] = useState(false)
-  const [chooseAngilalModal, setChooseAngilalModal] = useState("")
-  const [cacheProduct, setCacheProduct] = useState([])
+  const [editChooseAngilal, setEditChooseAngilal] = useState(false);
+  const [chooseAngilalModal, setChooseAngilalModal] = useState("");
+  const [cacheProduct, setCacheProduct] = useState([]);
 
   const addSpecs = () => {
     setProductSpecList((current) => [
@@ -173,7 +172,7 @@ const Datatable = () => {
       const { data } = await axios.post("/product", formdata);
       if (data.success) {
         resetForm();
-        setRefreshKey(old => old + 1)
+        setRefreshKey((old) => old + 1);
         setCreateProductModal(false);
         Swal.fire({
           icon: "success",
@@ -210,15 +209,15 @@ const Datatable = () => {
   };
 
   const setUpEditModal = async (item) => {
-    setCacheProduct(item)
+    setCacheProduct(item);
     if (item.SubID === null) {
-      setEditChooseAngilal(true)
-      setProductName(item.name)
-      setProductEditId(item._id)
+      setEditChooseAngilal(true);
+      setProductName(item.name);
+      setProductEditId(item._id);
       return Swal.fire({
         icon: "warning",
-        title: "Ангилал сонгож өгнө үү!"
-      })
+        title: "Ангилал сонгож өгнө үү!",
+      });
     }
     setEditLoading(true);
     setProductEditId(item._id);
@@ -247,19 +246,22 @@ const Datatable = () => {
   };
 
   const chooseAngilal = async () => {
-    let formdata = new FormData()
-    formdata.append("SubID", subID)
-    const { data } = await axios.post("/productChoseAngilal/" + productEditId, formdata)
+    let formdata = new FormData();
+    formdata.append("SubID", subID);
+    const { data } = await axios.post(
+      "/productChoseAngilal/" + productEditId,
+      formdata
+    );
     if (data.success) {
-      setEditChooseAngilal(false)
-      setRefreshKey(old => old + 1)
+      setEditChooseAngilal(false);
+      setRefreshKey((old) => old + 1);
       // setUpEditModal(data.result)
       Swal.fire({
         icon: "success",
-        title: "Та одоо барааний засвараа хийж болно"
-      })
+        title: "Та одоо барааний засвараа хийж болно",
+      });
     }
-  }
+  };
 
   const editProduct = async () => {
     try {
@@ -294,7 +296,7 @@ const Datatable = () => {
       if (data.success) {
         setEditLoading(false);
         resetForm();
-        setRefreshKey(old => old + 1)
+        setRefreshKey((old) => old + 1);
         setCreateProductModal(false);
         Swal.fire({
           icon: "success",
@@ -311,70 +313,70 @@ const Datatable = () => {
     }
   };
 
-  const editChosenAngilal = async () => {
-
-  }
+  const editChosenAngilal = async () => {};
 
   const deleteProduct = async (product) => {
     Swal.fire({
       title: `Та итгэлтэй байна уу ?`,
       text: `${product.name} ыг устгах гэж байна!`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Болих',
-      confirmButtonText: 'Устгах'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Болих",
+      confirmButtonText: "Устгах",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { data } = await axios.delete("/product/" + product._id)
+        const { data } = await axios.delete("/product/" + product._id);
         if (data.success) {
-          setRefreshKey(old => old + 1)
+          setRefreshKey((old) => old + 1);
           Swal.fire({
             icon: "success",
-            title: 'Устгагдлаа!',
-          })
+            title: "Устгагдлаа!",
+          });
         } else {
           Swal.fire({
             icon: "error",
-          })
+          });
         }
       }
-    })
-  }
+    });
+  };
 
-  const [saleProductName, setSaleProductName] = useState("")
-  const [saleProductPrice, setSaleProductPrice] = useState("")
-  const [saleProductID, setSaleProductID] = useState("")
-  const [saleProductOffer, setSaleProductOffer] = useState(0)
+  const [saleProductName, setSaleProductName] = useState("");
+  const [saleProductPrice, setSaleProductPrice] = useState("");
+  const [saleProductID, setSaleProductID] = useState("");
+  const [saleProductOffer, setSaleProductOffer] = useState(0);
 
   const onSaleProduct = (product) => {
-    setOnSaleModal(true)
-    setSaleProductName(product.name)
-    setSaleProductPrice(product.price)
-    setSaleProductID(product._id)
-    setSaleProductOffer(product?.offer)
-  }
+    setOnSaleModal(true);
+    setSaleProductName(product.name);
+    setSaleProductPrice(product.price);
+    setSaleProductID(product._id);
+    setSaleProductOffer(product?.offer);
+  };
 
   const resetSale = () => {
-    setSaleProductPrice("")
-    setSaleProductID("")
-    setSaleProductName("")
-    setSaleProductOffer("")
-  }
+    setSaleProductPrice("");
+    setSaleProductID("");
+    setSaleProductName("");
+    setSaleProductOffer("");
+  };
 
   const saveSelectedProductSale = async () => {
-    const { data } = await axios.post("/productSale/" + saleProductID, { offer: saleProductOffer })
+    const { data } = await axios.post("/productSale/" + saleProductID, {
+      offer: saleProductOffer,
+    });
     if (data.success) {
-      resetSale()
-      setRefreshKey(old => old + 1)
-      setOnSaleModal(false)
+      resetSale();
+      setRefreshKey((old) => old + 1);
+      setOnSaleModal(false);
       Swal.fire({
         icon: "success",
-        title: "Хадгалсан"
-      })
+        title: "Хадгалсан",
+      });
     }
-  }
+  };
 
   return (
     <Card
@@ -418,15 +420,9 @@ const Datatable = () => {
               <TableRow key={row._id}>
                 <TableCell className="tableCell">
                   <div>
-                    {
-                      row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"
-                    }
+                    {row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"}
                   </div>
-                  <div>
-                    {
-                      row?.SubID?.name
-                    }
-                  </div>
+                  <div>{row?.SubID?.name}</div>
                 </TableCell>
                 <TableCell className="tableCell">
                   <div>
@@ -449,12 +445,17 @@ const Datatable = () => {
                 </TableCell>
                 <TableCell className="tableCell">
                   <h2>{row.price}</h2>
-                  {
-                    row.offer && <h2 className="text-red-500">{Math.round(row.price - (row.price * row.offer / 100))}</h2>
-                  }
+                  {row.offer && (
+                    <h2 className="text-red-500">
+                      {Math.round(row.price - (row.price * row.offer) / 100)}
+                    </h2>
+                  )}
                 </TableCell>
                 <TableCell className="tableCell">
-                  <button onClick={() => onSaleProduct(row)} className="text-xl text-red-500">
+                  <button
+                    onClick={() => onSaleProduct(row)}
+                    className="text-xl text-red-500"
+                  >
                     <FaPercent />
                   </button>
                 </TableCell>
@@ -474,7 +475,6 @@ const Datatable = () => {
                   >
                     <DeleteOutlined />
                   </button>
-
                 </TableCell>
               </TableRow>
             ))}
@@ -486,10 +486,11 @@ const Datatable = () => {
         width={1000}
         onCancel={() => setEditChooseAngilal(false)}
         okText={editChooseAngilal ? "Засах" : "Өөрчлөх"}
-        onOk={editChooseAngilal ? () => chooseAngilal() : () => editChosenAngilal()}
+        onOk={
+          editChooseAngilal ? () => chooseAngilal() : () => editChosenAngilal()
+        }
         visible={editChooseAngilal}
       >
-
         <div className="w-full p-2 flex flex-col relative h-48">
           <input
             onChange={(e) => searchingCategory(e.target.value)}
@@ -499,8 +500,9 @@ const Datatable = () => {
             placeholder="Ангилал нэрээр хайх"
           />
           <div
-            className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
-              }`}
+            className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${
+              openSelection ? "scale-y-100" : "scale-y-0"
+            }`}
           >
             <div className="w-full flex-1 p-2 overflow-auto">
               {filteredCategoryList?.map((item, index) => (
@@ -544,7 +546,8 @@ const Datatable = () => {
           </div>
         </div>
         <div className="text-xl">
-          Таны сонгосон категори:  {nameOfCategory}/{nameOfCategorySub}/{productName}
+          Таны сонгосон категори: {nameOfCategory}/{nameOfCategorySub}/
+          {productName}
         </div>
       </Modal>
       <Modal
@@ -552,15 +555,11 @@ const Datatable = () => {
         visible={onSaleModal}
         okText={"Хадгалах"}
         cancelText={"Болих"}
-        onOk={
-          () => saveSelectedProductSale()
-        }
-        onCancel={
-          () => {
-            setOnSaleModal(false)
-            resetSale()
-          }
-        }
+        onOk={() => saveSelectedProductSale()}
+        onCancel={() => {
+          setOnSaleModal(false);
+          resetSale();
+        }}
       >
         <h1 className="text-center text-red-400">
           Анхаар та хямдарсан үнийг сайн шалгаад хадгална уу!
@@ -568,31 +567,38 @@ const Datatable = () => {
         <h1 className="text-center text-red-400">
           100 гэж бичсэн тохиолдолд 100% буюу бүрэн хямдарсан гэж үзнэ
         </h1>
-        <h1>
-          Нэр-{saleProductName}
-        </h1>
-        <h1>
-          Үнэ-{saleProductPrice}
-        </h1>
-        <input maxlength="3" value={saleProductOffer} onChange={(e) => {
-          const limit = 3;
-          setSaleProductOffer(e.target.value.slice(0, limit))
-          if (e.target.value >= 100) {
-            setSaleProductOffer("")
-            Swal.fire({
-              icon: "warning",
-              title: "100% гаас доош байх хэрэгтэй"
-            })
-          }
-        }} placeholder="Хямдралын хувь" type={"number"} className="p-2 border w-full my-2" />
+        <h1>Нэр-{saleProductName}</h1>
+        <h1>Үнэ-{saleProductPrice}</h1>
+        <input
+          maxlength="3"
+          value={saleProductOffer}
+          onChange={(e) => {
+            const limit = 3;
+            setSaleProductOffer(e.target.value.slice(0, limit));
+            if (e.target.value >= 100) {
+              setSaleProductOffer("");
+              Swal.fire({
+                icon: "warning",
+                title: "100% гаас доош байх хэрэгтэй",
+              });
+            }
+          }}
+          placeholder="Хямдралын хувь"
+          type={"number"}
+          className="p-2 border w-full my-2"
+        />
         <h1>
           Хямдарч байгаа хувь-{saleProductOffer && saleProductOffer + "%"}
         </h1>
         <h1>
-          Хямдарч байгаа үнэ-{Math.round(saleProductPrice * saleProductOffer / 100)}
+          Хямдарч байгаа үнэ-
+          {Math.round((saleProductPrice * saleProductOffer) / 100)}
         </h1>
         <h1>
-          Хямдарсаны дараах үнэ-{Math.round(saleProductPrice - (saleProductPrice * saleProductOffer / 100))}
+          Хямдарсаны дараах үнэ-
+          {Math.round(
+            saleProductPrice - (saleProductPrice * saleProductOffer) / 100
+          )}
         </h1>
       </Modal>
 
@@ -617,8 +623,9 @@ const Datatable = () => {
               placeholder="Ангилал нэрээр хайх"
             />
             <div
-              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
-                }`}
+              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${
+                openSelection ? "scale-y-100" : "scale-y-0"
+              }`}
             >
               <div className="w-full flex-1 p-2 overflow-auto">
                 {filteredCategoryList?.map((item, index) => (
@@ -676,8 +683,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("first");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "first" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "first" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа
                 </div>
@@ -689,8 +697,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("second");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "second" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "second" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа үзүүлэлт
                 </div>
@@ -702,8 +711,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("third");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "third" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "third" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Барааний зураг
                 </div>
@@ -715,8 +725,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("final");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "final" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "final" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Эцэс
                 </div>

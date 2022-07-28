@@ -18,6 +18,10 @@ import Product from "./pages/product/product";
 
 import axios from "axios";
 import Coupon from "./pages/coupon/coupon";
+import Orders from "./pages/orders/order";
+import NewsCategory from "./pages/news_category/news_category.jsx";
+import News from "./pages/news/news.jsx";
+import Online_credit from "./pages/online_credit/online_credit";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -47,6 +51,10 @@ ReactDOM.render(
         <Route path="/user" element={<User />} />
         <Route path="/product" element={<Product />} />
         <Route path="/coupon" element={<Coupon />} />
+        <Route path="/order" element={<Orders />} />
+        <Route path="/news_category" element={<NewsCategory />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/online_credit" element={<Online_credit />} />
       </Routes>
     </BrowserRouter>
   </Provider>,
