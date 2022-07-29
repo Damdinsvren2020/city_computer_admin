@@ -10,7 +10,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { CDNURL } from "../../../CDNURL";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const OnlineCreditTable = () => {
   const [form] = Form.useForm();
@@ -246,7 +248,7 @@ const OnlineCreditTable = () => {
       </TableContainer>
       <Modal
         title={editForm ? "лизинг" : "лизинг "}
-        width={580}
+        width={780}
         visible={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -272,29 +274,45 @@ const OnlineCreditTable = () => {
             className="w-full p-2 border my-1"
             placeholder="Тайлбар"
           />
-          <input
-            type={"text"}
-            value={material}
-            onChange={(e) => setMaterial(e.target.value)}
-            className="w-full p-2 border my-1"
-            placeholder="Бүрдүүлэх материал"
+          <h2>Бүрдүүлэх материал</h2>
+          <CKEditor
+            editor={ClassicEditor}
+            onReady={(editor) => {
+              // You can store the "editor" and use when it is needed.
+              console.log("Editor is ready to use!", editor);
+            }}
+            onChange={(event, editor) => {
+              const data = editor.getData();
+              setMaterial(data);
+            }}
           />
-          <input
-            type={"text"}
-            value={requirement}
-            onChange={(e) => setRequirement(e.target.value)}
-            className="w-full p-2 border my-1"
-            placeholder="Тавигдах шаардлага"
+
+          <h2>Тавигдах шаардлага</h2>
+          <CKEditor
+            editor={ClassicEditor}
+            onReady={(editor) => {
+              // You can store the "editor" and use when it is needed.
+              console.log("Editor is ready to use!", editor);
+            }}
+            onChange={(event, editor) => {
+              const data = editor.getData();
+              setRequirement(data);
+            }}
           />
-          <input
-            type={"text"}
-            value={condition}
-            onChange={(e) => setConditon(e.target.value)}
-            className="w-full p-2 border my-1"
-            placeholder="Ерөнхий нөхцөл"
+          <h2>Ерөнхий нөхцөл</h2>
+          <CKEditor
+            editor={ClassicEditor}
+            onReady={(editor) => {
+              // You can store the "editor" and use when it is needed.
+              console.log("Editor is ready to use!", editor);
+            }}
+            onChange={(event, editor) => {
+              const data = editor.getData();
+              setConditon(data);
+            }}
           />
         </div>
-        <div className="w-full flex flex-wrap gap-2 mt-4 w-48 h-48">
+        <div className="w-full flex flex-wrap gap-2 mt-20 w-48 h-48">
           <input
             onChange={(e) => {
               if (e.target?.files) {
