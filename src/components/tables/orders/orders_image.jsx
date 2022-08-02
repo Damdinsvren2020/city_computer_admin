@@ -40,17 +40,20 @@ const Datatable = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  //   useEffect(() => {
-  //     axios
-  //       .get("/brand")
-  //       .then((response) => {
-  //         const data = response.data.data;
-  //         setBrand(data);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }, [refreshKey]);
+  const [filteredOrders, setFilteredOrders] = useState([])
+
+  useEffect(() => {
+    axios
+      .get("/order")
+      .then((response) => {
+        const data = response.data.data;
+        setBrand(data);
+        setFilteredOrders(data)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [refreshKey]);
 
   const showModal = () => {
     setVisible(true);
@@ -194,6 +197,21 @@ const Datatable = () => {
     },
   };
 
+  const searchByCustomer = (prop) => {
+
+    if (brand) {
+      const SearchAngilal = brand.filter((el) => {
+        if (prop === "") {
+          return el;
+        } else {
+          return el?.user?.email.toLowerCase().includes(prop);
+        }
+      });
+      return setFilteredOrders(SearchAngilal);
+    }
+
+  }
+
   return (
     <Card
       style={{ marginLeft: "20px" }}
@@ -210,29 +228,44 @@ const Datatable = () => {
         </Button>
       }
     >
+      <input onChange={(e) => searchByCustomer(e.target.value)} className="w-96 border p-2 mb-2" placeholder="Хэрэглэгчийн имайлээр хайх" />
       <TableContainer component={Paper} className="table">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell className="tableCell">Захиалгын нэр</TableCell>
-              <TableCell className="tableCell">Захиалгын төрөл</TableCell>
-              <TableCell className="tableCell">Зураг</TableCell>
+              <TableCell className="tableCell">Хэрэглэгч</TableCell>
+              <TableCell className="tableCell">Хүргэлтийн байршил</TableCell>
+              <TableCell className="tableCell">Холбоо барих</TableCell>
+              <TableCell className="tableCell">Захиалгын төлөв</TableCell>
+              <TableCell className="tableCell">Хүргэлт</TableCell>
               <TableCell className="tableCell">Үйлдэл</TableCell>
             </TableRow>
           </TableHead>
-          {/* <TableBody>
-            {brand.map((row) => (
+          <TableBody>
+            {filteredOrders.map((row) => (
               <TableRow key={row._id}>
                 <TableCell className="tableCell">
-                  <h2>{row.name}</h2>
+                  <h2>{row?.orderCode}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row?.user?.email}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row?.address}</h2>
+                  <h2>{row?.address_detail}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row?.number}</h2>
                 </TableCell>
                 <TableCell className="tableCell">
                   <div>
-                    <img
-                      src={`${CDNURL}/${row.link}`}
-                      alt=""
-                      className="image w-48 h-48 object-contain"
-                    />
+                    {row?.isPaid ? "Төлөгдсөн" : "Төлөгдөөгүй"}
+                  </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <div>
+                    {row?.isDelivered ? "Хүргэгдсэн" : "Хүргэгдээгүй"}
                   </div>
                 </TableCell>
                 <TableCell className="tableCell">
@@ -253,7 +286,7 @@ const Datatable = () => {
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody> */}
+          </TableBody>
         </Table>
       </TableContainer>
 
