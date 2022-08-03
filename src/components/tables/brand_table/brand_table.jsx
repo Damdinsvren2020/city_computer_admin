@@ -21,6 +21,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import MenuI from "./menu1/menu1";
 import Paper from "@mui/material/Paper";
+import { Pagination } from "@mui/material/Pagination/Pagination";
 
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -32,14 +33,15 @@ const Datatable = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [brand, setBrand] = useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [editBrand, setEditBrand] = useState(false);
   const [editBrandId, setEditBrandId] = useState("");
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [dataPage, setDataPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowPerPage] = useState(5);
 
   useEffect(() => {
     axios
@@ -52,6 +54,10 @@ const Datatable = () => {
         console.log(error);
       });
   }, [refreshKey]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [dataPage]);
 
   const showModal = () => {
     setVisible(true);
@@ -176,78 +182,9 @@ const Datatable = () => {
     setImage(null);
   };
 
-  const props = {
-    name: "image",
-    action: CDNURL + "/api/banner",
-    headers: {
-      authorization: "Bearer " + localStorage.getItem("token"),
-    },
-
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-      }
-
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} Таны зураг амжилттай орлоо`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} Алдаа гарлaаа.`);
-      }
-    },
-  };
-
-  const columns = [
-    {
-      key: "num",
-      title: "№",
-      width: 60,
-    },
-
-    {
-      key: "link",
-      title: "zurag",
-      dataIndex: "link",
-      render: (link) => (
-        <img src={`${CDNURL}/${link}`} className="w-24 h-24 object-contain" />
-      ),
-    },
-
-    {
-      key: "created",
-      title: "Огноо",
-      width: 150,
-      render: (text, record, idx) =>
-        record.created ? moment(record.created).format("YYYY-MM-DD") : "-",
-    },
-    {
-      title: "Үйлдэл",
-      key: "action",
-      fixed: "right",
-      render: (text, record) => {
-        return (
-          <>
-            <Dropdown
-              disabled={record.loading}
-              trigger="click"
-              overlay={MenuI(record)}
-            >
-              <a
-                className="ant-dropdown-link"
-                onClick={(e) => e.preventDefault()}
-              >
-                Үйлдэл
-                {record.loading ? (
-                  <LoadingOutlined spin={true} />
-                ) : (
-                  <DownOutlined />
-                )}
-              </a>
-            </Dropdown>
-          </>
-        );
-      },
-      width: 90,
-    },
-  ];
+  const onDataPageChange = (event, page) => setDataPage(page - 1);
+  const handleChangePage = (event, page) => setPage(newpage);
+  const handleChangeRowsPerPage = (event, newPage) => setPage(newpage);
 
   return (
     <Card
