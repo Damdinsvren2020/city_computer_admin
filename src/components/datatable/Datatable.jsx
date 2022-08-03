@@ -2,10 +2,9 @@ import "./datatable.scss";
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Table, Space, Card, Select } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Table, Space, Card } from "antd";
 const { Column } = Table;
 
 const Datatable = () => {
@@ -164,6 +163,10 @@ const Datatable = () => {
     });
   };
 
+  const { Option } = Select;
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
   return (
     <Card
       title="Хэрэглэгч"
@@ -255,7 +258,7 @@ const Datatable = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="role"
             name="role"
             rules={[
@@ -265,12 +268,36 @@ const Datatable = () => {
               },
             ]}
           >
+
+            
             <Input
               placeholder="Талбарыг бөглөнө үү"
               autoComplete="off"
               value={role}
               onChange={(e) => setRole(e.target.value)}
             />
+          </Form.Item> */}
+
+          <Form.Item
+            label="Эрх оруулах"
+            name="Эрх оруулах"
+            rules={[
+              {
+                required: true,
+                message: "Хэрэглэгчийн эрхийг оруулна уу",
+              },
+            ]}
+          >
+            <Select
+              defaultValue=""
+              style={{
+                width: 314,
+              }}
+              onChange={handleChange}
+            >
+              <Option value="">Админ</Option>
+              <Option value="">Хэрэглэгч</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item

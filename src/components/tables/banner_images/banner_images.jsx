@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, Dropdown, Button, Card, Modal } from "antd";
 import moment from "moment";
-import {
-  LoadingOutlined,
-  DownOutlined,
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import MenuI from "./menu1/menu1";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Swal from "sweetalert2";
 

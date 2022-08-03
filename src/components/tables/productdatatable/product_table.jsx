@@ -889,9 +889,9 @@ const Datatable = () => {
                   {imageNew2 && (
                     <img
                       src={
-                        image1
-                          ? image1
-                            ? URL.createObjectURL(image1[0] && image1[0])
+                        image2
+                          ? image2
+                            ? URL.createObjectURL(image2[0] && image2[0])
                             : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
                           : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
                       }

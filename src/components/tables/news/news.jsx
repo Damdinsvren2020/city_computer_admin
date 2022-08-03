@@ -125,35 +125,10 @@ const Datatable = () => {
     setConfirmLoading(true);
     try {
       let formdata = new FormData();
-      formdata.append("name", name);
-      formdata.append("description", description);
-      formdata.append("orders", orders);
-      newImage
-        ? formdata.append("thumbnail", image[0])
-        : formdata.append("thumbnailOld", image);
-      newImage && formdata.append("newThumbnail", newImage);
-      const { data } = await axios.put(
-        `news_category/${editCategoryId}`,
-        formdata
-      );
-      if (data.success) {
-        setRefreshKey((old) => old + 1);
-        setVisible(false);
-        setConfirmLoading(false);
-        form.resetFields();
-        new Swal({
-          icon: "success",
-          name: data.result,
-          description: data.result,
-        });
-      }
-      if (!data.success) {
-        setConfirmLoading(false);
-        new Swal({
-          icon: "error",
-          title: data.result,
-        });
-      }
+      formdata.appent("name", name);
+      formdata.appent("description", description);
+      link && formdata.append("thumbnail", link);
+      const { data } = await axios.put("/news/");
     } catch (error) {
       setConfirmLoading(false);
       new Swal({

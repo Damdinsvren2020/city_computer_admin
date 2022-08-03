@@ -18,7 +18,6 @@ const { Content, Sider, Header } = Layout;
 
 const AdminLayer = ({ route: { routes }, location }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [theme, setTheme] = useState("light");
   let active = (location.pathname?.split("/") || [])[2];
   useEffect(() => {
     if (!(user && user.role === "admin")) {
@@ -35,64 +34,6 @@ const AdminLayer = ({ route: { routes }, location }) => {
 
   return (
     <Layout className="site-layout">
-      {/* <Sider
-                trigger={<MenuOutlined className="trigger" />}
-                width={220}
-                theme={theme}
-                collapsible
-                collapsed={collapsed}
-            >
-                <div className="logo" style={{ textAlign: "center" }}>
-                    <Link to="/admin">
-                        <h3 style={{ padding: "20px 0 10px 0px" }}>
-                            {collapsed ? "380" : "380 АДМИН"}
-                        </h3>
-                    </Link>
-                </div>
-                <Menu theme={theme} selectedKeys={active} mode="inline">
-                    <Menu.ItemGroup key="g1" title="Захиалга">
-                        <Menu.Item icon={<FiCreditCard />} key="orders">
-                            <Link to="/admin">
-                                <span> Захиалгууд</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item icon={<UserOutlined />} key="users">
-                            <Link to="/admin/users">
-                                <span> Хэрэглэгчид</span>
-                            </Link>
-                        </Menu.Item>
-                    </Menu.ItemGroup>
-                    <Menu.ItemGroup key="g2" title="Каталог">
-                        <Menu.Item icon={<BiBox />} key="product">
-                            <Link to="/admin/product">
-                                <span> Бараа бүтээгдэхүүн</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item icon={<RiFilter2Line />} key="category">
-                            <Link to="/admin/category">
-                                <span> Ангилал</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item icon={<RiBriefcase3Line />} key="brand">
-                            <Link to="/admin/brand">
-                                <span> Брэнд</span>
-                            </Link>
-                        </Menu.Item>
-                    </Menu.ItemGroup>
-                    <Menu.ItemGroup key="g3" title="Вэбсайт">
-                        <Menu.Item icon={<FiShare2 />} key="website">
-                            <Link to="/admin">
-                                <span> Нийтлэл</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item icon={<FiImage />} key="banner">
-                            <Link to="/admin/banner">
-                                <span>Баннер</span>
-                            </Link>
-                        </Menu.Item>
-                    </Menu.ItemGroup>
-                </Menu>
-            </Sider> */}
       <Layout>
         <Header style={{ background: "#fff", height: 64, padding: "0 30px" }}>
           <Row

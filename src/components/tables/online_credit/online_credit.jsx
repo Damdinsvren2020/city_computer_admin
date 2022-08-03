@@ -36,6 +36,7 @@ const OnlineCreditTable = () => {
       .get("/onlinecredit")
       .then((response) => {
         const data = response.data.data;
+        console.log("images", data);
         setOnlineCredit(data);
       })
       .catch((error) => {
@@ -99,11 +100,12 @@ const OnlineCreditTable = () => {
       newImage
         ? formdata.append("thumbnail", image[0])
         : formdata.append("thumbnailOld", image);
-      newImage && formdata.append("newThumbnail", newImage);
+      newImage && formdata.append("newThumbnail", photo);
       const { data } = await axios.put(
         `onlinecredit/${editonlinecreditId}`,
         formdata
       );
+      console.log("file zasah", data);
       if (data.success) {
         setRefreshKey((old) => old + 1);
         setVisible(false);

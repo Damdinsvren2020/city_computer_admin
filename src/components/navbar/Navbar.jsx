@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Layout, Menu, Row, Dropdown, Avatar } from "antd";
-import {
-  LogoutOutlined,
-  UserOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
+import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 const { Header } = Layout;
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
 
   const logOutUser = () => {
     navigate("/");
@@ -28,15 +22,7 @@ const Navbar = () => {
           justify="space-between"
           style={{ height: "100%", width: "98%" }}
         >
-          <div>
-            {React.createElement(
-              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-              {
-                className: "trigger",
-                onClick: () => setCollapsed(!collapsed),
-              }
-            )}
-          </div>
+          <div></div>
           <Dropdown
             style={{ marginRight: "2rem" }}
             overlay={
