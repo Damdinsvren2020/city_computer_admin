@@ -11,9 +11,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-
+import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@mui/material/Paper";
-
 import axios from "axios";
 import Swal from "sweetalert2";
 import { CDNURL } from "../../../CDNURL";
@@ -22,18 +21,29 @@ const Datatable = () => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [editCategory, seteditCategory] = useState(false);
-  const [editCategoryId, setEditCategoryId] = useState("")
+  const [editCategoryId, setEditCategoryId] = useState("");
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [angilal, setAngilal] = useState([]);
   const [image, setImage] = useState(null);
-  const [newImage, setNewImage] = useState(false)
+  const [newImage, setNewImage] = useState(false);
 
   const [dropDownAngilal, setDropDownAngilal] = useState(false);
   const [matchingIndex, setMatchingIndex] = useState("");
   const [Name, setName] = useState("");
   const [Description, setDescription] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, angilal.length - page * rowsPerPage);
   useEffect(() => {
     axios
       .get("/angilal")
@@ -41,7 +51,7 @@ const Datatable = () => {
         const data = response.data.data;
         setAngilal(data);
         setFilteredCategory(data);
-        console.log(data)
+        console.log(data);
       })
       .catch((error) => {
         console.log(error);
@@ -51,21 +61,19 @@ const Datatable = () => {
   const showModal = () => {
     setVisible(true);
     seteditCategory(false);
-
   };
   const handleCancel = () => {
     setVisible(false);
-
   };
 
   const setUpEditCategory = (category) => {
-    seteditCategory(true)
-    setVisible(true)
-    setEditCategoryId(category._id)
-    setName(category.name)
-    setDescription(category.description)
-    setImage(category.link)
-  }
+    seteditCategory(true);
+    setVisible(true);
+    setEditCategoryId(category._id);
+    setName(category.name);
+    setDescription(category.description);
+    setImage(category.link);
+  };
 
   const Categorycreate = async () => {
     try {
@@ -78,7 +86,7 @@ const Datatable = () => {
         setVisible(false);
         setConfirmLoading(false);
         setRefreshKey((old) => old + 1);
-        resetCategory()
+        resetCategory();
         new Swal({
           icon: "success",
           title: data.result,
@@ -106,14 +114,16 @@ const Datatable = () => {
       let formdata = new FormData();
       formdata.append("name", Name);
       formdata.append("description", Description);
-      newImage ? formdata.append("avatar", image[0]) : formdata.append("avatarOld", image)
-      newImage && formdata.append("newAvatar", newImage)
+      newImage
+        ? formdata.append("avatar", image[0])
+        : formdata.append("avatarOld", image);
+      newImage && formdata.append("newAvatar", newImage);
       const { data } = await axios.put("/angilal/" + editCategoryId, formdata);
       if (data.success) {
-        resetCategory()
-        seteditCategory(false)
-        setVisible(false)
-        setRefreshKey(old => old + 1)
+        resetCategory();
+        seteditCategory(false);
+        setVisible(false);
+        setRefreshKey((old) => old + 1);
         new Swal({
           icon: "success",
         });
@@ -123,49 +133,49 @@ const Datatable = () => {
         icon: "error",
       });
     }
-  }
+  };
 
   const categoryDelete = async (category) => {
     Swal.fire({
       title: `Та итгэлтэй байна уу ?`,
       text: `${category.name} ыг устгах гэж байна!`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Болих',
-      confirmButtonText: 'Устгах'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Болих",
+      confirmButtonText: "Устгах",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { data } = await axios.delete("/angilal/" + category._id)
+        const { data } = await axios.delete("/angilal/" + category._id);
         if (data.success) {
-          setRefreshKey(old => old + 1)
+          setRefreshKey((old) => old + 1);
           Swal.fire({
             icon: "success",
-            title: 'Устгагдлаа!',
-          })
+            title: "Устгагдлаа!",
+          });
         } else {
           Swal.fire({
             icon: "warning",
             title: data.result,
-            text: data.description
-          })
+            text: data.description,
+          });
         }
       }
-    })
-  }
+    });
+  };
 
   const resetCategory = () => {
-    setName("")
-    setDescription("")
-    setImage(null)
-  }
+    setName("");
+    setDescription("");
+    setImage(null);
+  };
 
   const [subAngilalName, setSubAngilalName] = useState("");
   const [subAngilalDesc, setSubAngilalDesc] = useState("");
   const [FilteredCategory, setFilteredCategory] = useState([]);
-  const [editSubAngilal, setEditSubAngilal] = useState(false)
-  const [editSubAngilalId, setEditSubAngilalId] = useState("")
+  const [editSubAngilal, setEditSubAngilal] = useState(false);
+  const [editSubAngilalId, setEditSubAngilalId] = useState("");
 
   const createSubAngilal = async (id) => {
     try {
@@ -209,78 +219,80 @@ const Datatable = () => {
   };
 
   const setUpEditSub = (sub) => {
-    setSubAngilalName(sub.name)
-    setSubAngilalDesc(sub.content)
-    setEditSubAngilal(true)
-    setEditSubAngilalId(sub._id)
-  }
+    setSubAngilalName(sub.name);
+    setSubAngilalDesc(sub.content);
+    setEditSubAngilal(true);
+    setEditSubAngilalId(sub._id);
+  };
 
   const resetSubAngilalForm = () => {
-    setSubAngilalDesc("")
-    setSubAngilalName("")
-    setEditSubAngilal(false)
-    setEditSubAngilalId("")
-  }
+    setSubAngilalDesc("");
+    setSubAngilalName("");
+    setEditSubAngilal(false);
+    setEditSubAngilalId("");
+  };
 
   const SubAngilalEdit = async () => {
     try {
       let formdata = new FormData();
       formdata.append("name", subAngilalName);
       formdata.append("content", subAngilalDesc);
-      const { data } = await axios.put("/subangilal/" + editSubAngilalId, formdata)
+      const { data } = await axios.put(
+        "/subangilal/" + editSubAngilalId,
+        formdata
+      );
       if (data.success) {
-        resetSubAngilalForm()
-        setRefreshKey(old => old + 1)
+        resetSubAngilalForm();
+        setRefreshKey((old) => old + 1);
         Swal.fire({
           icon: "success",
-        })
+        });
       }
     } catch (error) {
       Swal.fire({
         icon: "error",
-      })
+      });
     }
-  }
+  };
 
   const deleteSubAngilal = async (sub) => {
     Swal.fire({
       title: `Та итгэлтэй байна уу ?`,
       text: `${sub.name} ыг устгах гэж байна!`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Болих',
-      confirmButtonText: 'Устгах'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Болих",
+      confirmButtonText: "Устгах",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { data } = await axios.delete("/subangilal/" + sub._id)
+        const { data } = await axios.delete("/subangilal/" + sub._id);
         if (data.success) {
-          setRefreshKey(old => old + 1)
+          setRefreshKey((old) => old + 1);
           Swal.fire({
             icon: "success",
-            title: 'Устгагдлаа!',
-          })
+            title: "Устгагдлаа!",
+          });
         } else {
-          Swal.fire(
-            "Алдаа",
-            "error"
-          )
+          Swal.fire("Алдаа", "error");
         }
       }
-    })
-
-  }
+    });
+  };
 
   return (
     <Card
       style={{ marginLeft: "20px" }}
       extra={
-        <Button onClick={() => {
-          showModal(true)
-          seteditCategory(false)
-          resetCategory()
-        }} icon={<PlusOutlined />}>
+        <Button
+          onClick={() => {
+            showModal(true);
+            seteditCategory(false);
+            resetCategory();
+          }}
+          icon={<PlusOutlined />}
+        >
           Категори нэмэх
         </Button>
       }
@@ -295,35 +307,57 @@ const Datatable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {angilal.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className="tableCell">
-                  <h2>{row.name}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div className="cellWrapper">
-                    <img
-                      src={`${CDNURL}/${row.link}`}
-                      alt=""
-                      className="image"
-                    />
-                    {row.product}
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div className="cellWrapper">
-                    <button onClick={() => setUpEditCategory(row)} className="text-yellow-500 text-xl mx-2">
-                      <EditOutlined />
-                    </button>
-                    <button onClick={() => categoryDelete(row)} className="text-red-500 text-xl mx-2">
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                </TableCell>
+            {angilal
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell className="tableCell">
+                    <h2>{row.name}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div className="cellWrapper">
+                      <img
+                        src={`${CDNURL}/${row.link}`}
+                        alt=""
+                        className="image"
+                      />
+                      {row.product}
+                    </div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div className="cellWrapper">
+                      <button
+                        onClick={() => setUpEditCategory(row)}
+                        className="text-yellow-500 text-xl mx-2"
+                      >
+                        <EditOutlined />
+                      </button>
+                      <button
+                        onClick={() => categoryDelete(row)}
+                        className="text-red-500 text-xl mx-2"
+                      >
+                        <DeleteOutlined />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={angilal.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Modal
@@ -371,10 +405,10 @@ const Datatable = () => {
                   onChange={(e) => {
                     if (e.target?.files) {
                       setImage(e.target.files);
-                      setNewImage(true)
+                      setNewImage(true);
                     } else {
                       setImage(null);
-                      setNewImage(false)
+                      setNewImage(false);
                     }
                   }}
                   className="w-full p-2 border my-1"
@@ -382,31 +416,29 @@ const Datatable = () => {
                   id="thumbnail"
                   placeholder="Зурагнууд"
                 />
-                {
-                  newImage ?
-                    <img
-                      src={
-                        image
-                          ? image
-                            ? URL.createObjectURL(image[0] && image[0])
-                            : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                {newImage ? (
+                  <img
+                    src={
+                      image
+                        ? image
+                          ? URL.createObjectURL(image[0] && image[0])
                           : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
-                      }
-                      alt="profile"
-                      className="w-full h-full object-cover"
-                    />
-                    :
-                    <img
-                      src={`${CDNURL}/${image}`}
-                      alt="banner"
-                      className="w-full h-full object-cover"
-                    />
-                }
+                        : "https://cdn1.vectorstock.com/i/1000x1000/50/20/no-photo-or-blank-image-icon-loading-images-vector-37375020.jpg"
+                    }
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={`${CDNURL}/${image}`}
+                    alt="banner"
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
             </div>
           </div>
-          {
-            editCategory === false &&
+          {editCategory === false && (
             <div className="w-3/6">
               <input
                 autoCapitalize="none"
@@ -436,32 +468,46 @@ const Datatable = () => {
                           <div className="w-full flex flex-col gap-2">
                             <input
                               value={subAngilalName}
-                              onChange={(e) => setSubAngilalName(e.target.value)}
+                              onChange={(e) =>
+                                setSubAngilalName(e.target.value)
+                              }
                               className="w-full border p-2"
                               placeholder="Дэд ангилал нэр"
                             />
                             <input
                               value={subAngilalDesc}
-                              onChange={(e) => setSubAngilalDesc(e.target.value)}
+                              onChange={(e) =>
+                                setSubAngilalDesc(e.target.value)
+                              }
                               className="w-full border p-2"
                               placeholder="Дэд ангилал тайлбар"
                             />
                             <button
-                              onClick={editSubAngilal ? () => SubAngilalEdit() : () => createSubAngilal(item._id)}
+                              onClick={
+                                editSubAngilal
+                                  ? () => SubAngilalEdit()
+                                  : () => createSubAngilal(item._id)
+                              }
                               className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
                             >
                               {" "}
-                              {
-                                editSubAngilal ? <EditOutlined /> : <PlusOutlined />
-                              }
+                              {editSubAngilal ? (
+                                <EditOutlined />
+                              ) : (
+                                <PlusOutlined />
+                              )}
                             </button>
                           </div>
                           <div className="w-full ">
                             {item?.SubAngilal?.map((item, index) => (
                               <div className="w-full p-2 hover:bg-gray-200 flex justify-between ">
                                 <h1>{item.name}</h1>
-                                <button onClick={() => setUpEditSub(item)}>Edit</button>
-                                <button onClick={() => deleteSubAngilal(item)}>Delete</button>
+                                <button onClick={() => setUpEditSub(item)}>
+                                  Edit
+                                </button>
+                                <button onClick={() => deleteSubAngilal(item)}>
+                                  Delete
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -472,7 +518,7 @@ const Datatable = () => {
                 ))}
               </div>
             </div>
-          }
+          )}
         </div>
       </Modal>
     </Card>

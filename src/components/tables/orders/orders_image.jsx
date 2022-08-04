@@ -2,24 +2,16 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 import { Modal } from "antd";
-import { Form, Input, Button, Card, message, Upload, Dropdown } from "antd";
-import moment from "moment";
-import {
-  UploadOutlined,
-  LoadingOutlined,
-  DownOutlined,
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { Form, Input, Button, Card, message } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import MenuI from "./menu1/menu1";
 import Paper from "@mui/material/Paper";
+import TablePagination from "@material-ui/core/TablePagination";
 
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -31,24 +23,32 @@ const Datatable = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [brand, setBrand] = useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [editBrand, setEditBrand] = useState(false);
   const [editBrandId, setEditBrandId] = useState("");
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-
-  const [filteredOrders, setFilteredOrders] = useState([])
-
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const emptyRows =
+    rowsPerPage -
+    Math.min(rowsPerPage, filteredOrders.length - page * rowsPerPage);
   useEffect(() => {
     axios
       .get("/order")
       .then((response) => {
         const data = response.data.data;
         setBrand(data);
-        setFilteredOrders(data)
+        setFilteredOrders(data);
       })
       .catch((error) => {
         console.log(error);
@@ -198,7 +198,6 @@ const Datatable = () => {
   };
 
   const searchByCustomer = (prop) => {
-
     if (brand) {
       const SearchAngilal = brand.filter((el) => {
         if (prop === "") {
@@ -209,8 +208,7 @@ const Datatable = () => {
       });
       return setFilteredOrders(SearchAngilal);
     }
-
-  }
+  };
 
   return (
     <Card
@@ -228,7 +226,11 @@ const Datatable = () => {
         </Button>
       }
     >
-      <input onChange={(e) => searchByCustomer(e.target.value)} className="w-96 border p-2 mb-2" placeholder="Хэрэглэгчийн имайлээр хайх" />
+      <input
+        onChange={(e) => searchByCustomer(e.target.value)}
+        className="w-96 border p-2 mb-2"
+        placeholder="Хэрэглэгчийн имайлээр хайх"
+      />
       <TableContainer component={Paper} className="table">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -243,51 +245,65 @@ const Datatable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredOrders.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell className="tableCell">
-                  <h2>{row?.orderCode}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row?.user?.email}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row?.address}</h2>
-                  <h2>{row?.address_detail}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row?.number}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    {row?.isPaid ? "Төлөгдсөн" : "Төлөгдөөгүй"}
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    {row?.isDelivered ? "Хүргэгдсэн" : "Хүргэгдээгүй"}
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    <button
-                      onClick={() => setUpBrandEdit(row)}
-                      className="text-yellow-500 text-xl mx-2"
-                    >
-                      <EditOutlined />
-                    </button>
-                    <button
-                      onClick={() => deleteHandler(row)}
-                      className="text-red-500 text-xl mx-2"
-                    >
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                </TableCell>
+            {filteredOrders
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow key={row._id}>
+                  <TableCell className="tableCell">
+                    <h2>{row?.orderCode}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row?.user?.email}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row?.address}</h2>
+                    <h2>{row?.address_detail}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row?.number}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>{row?.isPaid ? "Төлөгдсөн" : "Төлөгдөөгүй"}</div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      {row?.isDelivered ? "Хүргэгдсэн" : "Хүргэгдээгүй"}
+                    </div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      <button
+                        onClick={() => setUpBrandEdit(row)}
+                        className="text-yellow-500 text-xl mx-2"
+                      >
+                        <EditOutlined />
+                      </button>
+                      <button
+                        onClick={() => deleteHandler(row)}
+                        className="text-red-500 text-xl mx-2"
+                      >
+                        <DeleteOutlined />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Modal

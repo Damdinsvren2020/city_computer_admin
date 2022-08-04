@@ -26,6 +26,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import TablePagination from "@material-ui/core/TablePagination";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -44,6 +45,17 @@ const CouponTable = () => {
   const [productList, setProductList] = useState([]);
   const [filteredProductList, setFilteredProductList] = useState([]);
   const [couponList, setCouponList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, couponList.length - page * rowsPerPage);
 
   useEffect(() => {
     const getProductList = async () => {
@@ -383,77 +395,88 @@ const CouponTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {couponList.map((row) => (
-              <TableRow
-                key={row._id}
-                className={`${row.isActive ? "opacity-1" : "opacity-20"}`}
-              >
-                <TableCell className="tableCell">
-                  <div className="flex flex-col justify-center items-center gap-2">
-                    <div>
-                      {row.isActive ? (
-                        <BsCircleFill color="#77c66f" />
-                      ) : (
-                        <BsCircleFill color="red" />
-                      )}
+            {couponList
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow
+                  key={row._id}
+                  className={`${row.isActive ? "opacity-1" : "opacity-20"}`}
+                >
+                  <TableCell className="tableCell">
+                    <div className="flex flex-col justify-center items-center gap-2">
+                      <div>
+                        {row.isActive ? (
+                          <BsCircleFill color="#77c66f" />
+                        ) : (
+                          <BsCircleFill color="red" />
+                        )}
+                      </div>
+                      <div>
+                        <Switch
+                          defaultChecked={row.isActive}
+                          onChange={() => changeStateOfCoupon(row._id)}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <Switch
-                        defaultChecked={row.isActive}
-                        onChange={() => changeStateOfCoupon(row._id)}
-                      />
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>{row.name}</div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>{row.description}</div>
-                </TableCell>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>{row.name}</div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>{row.description}</div>
+                  </TableCell>
 
-                <TableCell className="tableCell">
-                  <h2>{row?.product?.name}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row?.product?.price}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.offer ? row?.offer + "%" : "байхгүй"}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>
-                    {row.offer
-                      ? Math.round(
-                          row?.product?.price -
-                            (row?.product?.price * row?.offer) / 100
-                        )
-                      : "байхгүй"}
-                  </h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.validUntill}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    <button
-                      onClick={() => setUpEditCoupon(row)}
-                      className="mx-2 text-xl text-yellow-400"
-                    >
-                      <EditOutlined />
-                    </button>
-                    <button
-                      onClick={() => removeCoupon(row._id)}
-                      className="mx-2 text-xl text-red-400"
-                    >
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell className="tableCell">
+                    <h2>{row?.product?.name}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row?.product?.price}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.offer ? row?.offer + "%" : "байхгүй"}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>
+                      {row.offer
+                        ? Math.round(
+                            row?.product?.price -
+                              (row?.product?.price * row?.offer) / 100
+                          )
+                        : "байхгүй"}
+                    </h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.validUntill}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      <button
+                        onClick={() => setUpEditCoupon(row)}
+                        className="mx-2 text-xl text-yellow-400"
+                      >
+                        <EditOutlined />
+                      </button>
+                      <button
+                        onClick={() => removeCoupon(row._id)}
+                        className="mx-2 text-xl text-red-400"
+                      >
+                        <DeleteOutlined />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={couponList.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </Card>
   );

@@ -15,7 +15,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { CDNURL } from "../../../CDNURL";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-
+import TablePagination from "@material-ui/core/TablePagination";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const Datatable = () => {
@@ -35,12 +35,24 @@ const Datatable = () => {
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
   const [orders, setOrders] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const editorRef = useRef(null);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   const log = () => {
     if (editorRef.current) {
       setDescription(editorRef.current.getContent());
     }
   };
+  const emptyRows =
+    rowsPerPage -
+    Math.min(rowsPerPage, newscategory.length - page * rowsPerPage);
 
   useEffect(() => {
     axios
@@ -239,8 +251,22 @@ const Datatable = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={news.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Modal

@@ -19,10 +19,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import MenuI from "./menu1/menu1";
 import Paper from "@mui/material/Paper";
-import { Pagination } from "@mui/material/Pagination/Pagination";
-
+import TablePagination from "@material-ui/core/TablePagination";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { CDNURL } from "../../../CDNURL";
@@ -39,10 +37,17 @@ const Datatable = () => {
   const [newImage, setNewImage] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [dataPage, setDataPage] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowPerPage] = useState(5);
-
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, brand.length - page * rowsPerPage);
   useEffect(() => {
     axios
       .get("/brand")
@@ -54,10 +59,6 @@ const Datatable = () => {
         console.log(error);
       });
   }, [refreshKey]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [dataPage]);
 
   const showModal = () => {
     setVisible(true);
@@ -182,10 +183,6 @@ const Datatable = () => {
     setImage(null);
   };
 
-  const onDataPageChange = (event, page) => setDataPage(page - 1);
-  const handleChangePage = (event, page) => setPage(newpage);
-  const handleChangeRowsPerPage = (event, newPage) => setPage(newpage);
-
   return (
     <Card
       style={{ marginLeft: "20px" }}
@@ -212,40 +209,56 @@ const Datatable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {brand.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell className="tableCell">
-                  <h2>{row.name}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    <img
-                      src={`${CDNURL}/${row.link}`}
-                      alt=""
-                      className="image w-48 h-48 object-contain"
-                    />
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    <button
-                      onClick={() => setUpBrandEdit(row)}
-                      className="text-yellow-500 text-xl mx-2"
-                    >
-                      <EditOutlined />
-                    </button>
-                    <button
-                      onClick={() => deleteHandler(row)}
-                      className="text-red-500 text-xl mx-2"
-                    >
-                      <DeleteOutlined />
-                    </button>
-                  </div>
-                </TableCell>
+            {brand
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow key={row._id}>
+                  <TableCell className="tableCell">
+                    <h2>{row.name}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      <img
+                        src={`${CDNURL}/${row.link}`}
+                        alt=""
+                        className="image w-48 h-48 object-contain"
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      <button
+                        onClick={() => setUpBrandEdit(row)}
+                        className="text-yellow-500 text-xl mx-2"
+                      >
+                        <EditOutlined />
+                      </button>
+                      <button
+                        onClick={() => deleteHandler(row)}
+                        className="text-red-500 text-xl mx-2"
+                      >
+                        <DeleteOutlined />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={brand.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Modal

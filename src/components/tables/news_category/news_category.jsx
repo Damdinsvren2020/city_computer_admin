@@ -11,6 +11,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import TablePagination from "@material-ui/core/TablePagination";
 
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -30,6 +31,19 @@ const Datatable = () => {
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
   const [orders, setOrders] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const emptyRows =
+    rowsPerPage -
+    Math.min(rowsPerPage, newscategory.length - page * rowsPerPage);
 
   useEffect(() => {
     axios
@@ -242,8 +256,22 @@ const Datatable = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={newscategory.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Modal

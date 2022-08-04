@@ -25,16 +25,13 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import TablePagination from "@material-ui/core/TablePagination";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./styles.css";
 import { CDNURL } from "../../../CDNURL";
-
 import { FaPercent } from "react-icons/fa";
-
-// const { Column, ColumnGroup } = Table;
-
 const Datatable = () => {
   const [data, setData] = useState([]);
   const [createProductModal, setCreateProductModal] = useState(false);
@@ -53,6 +50,17 @@ const Datatable = () => {
 
   const [onSaleModal, setOnSaleModal] = useState(false);
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
   useEffect(() => {
     const getCategory = async () => {
       const { data } = await axios.get(`/angilal`);
@@ -415,70 +423,86 @@ const Datatable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell className="tableCell">
-                  <div>
-                    {row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"}
-                  </div>
-                  <div>{row?.SubID?.name}</div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <div>
-                    <img
-                      src={`${CDNURL}/${row.avatar}`}
-                      alt=""
-                      className="h-48 w-48 object-contain "
-                    />
-                    {row.product}
-                  </div>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.name}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.quantity}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.content}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.price}</h2>
-                  {row.offer && (
-                    <h2 className="text-red-500">
-                      {Math.round(row.price - (row.price * row.offer) / 100)}
-                    </h2>
-                  )}
-                </TableCell>
-                <TableCell className="tableCell">
-                  <button
-                    onClick={() => onSaleProduct(row)}
-                    className="text-xl text-red-500"
-                  >
-                    <FaPercent />
-                  </button>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <h2>{row.SKU}</h2>
-                </TableCell>
-                <TableCell className="tableCell">
-                  <button
-                    onClick={() => setUpEditModal(row)}
-                    className="text-xl text-yellow-500"
-                  >
-                    <EditOutlined />
-                  </button>
-                  <button
-                    onClick={() => deleteProduct(row)}
-                    className="text-xl text-red-500"
-                  >
-                    <DeleteOutlined />
-                  </button>
-                </TableCell>
+            {data
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow key={row._id}>
+                  <TableCell className="tableCell">
+                    <div>
+                      {row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"}
+                    </div>
+                    <div>{row?.SubID?.name}</div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <div>
+                      <img
+                        src={`${CDNURL}/${row.avatar}`}
+                        alt=""
+                        className="h-48 w-48 object-contain "
+                      />
+                      {row.product}
+                    </div>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.name}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.quantity}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.content}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.price}</h2>
+                    {row.offer && (
+                      <h2 className="text-red-500">
+                        {Math.round(row.price - (row.price * row.offer) / 100)}
+                      </h2>
+                    )}
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <button
+                      onClick={() => onSaleProduct(row)}
+                      className="text-xl text-red-500"
+                    >
+                      <FaPercent />
+                    </button>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <h2>{row.SKU}</h2>
+                  </TableCell>
+                  <TableCell className="tableCell">
+                    <button
+                      onClick={() => setUpEditModal(row)}
+                      className="text-xl text-yellow-500"
+                    >
+                      <EditOutlined />
+                    </button>
+                    <button
+                      onClick={() => deleteProduct(row)}
+                      className="text-xl text-red-500"
+                    >
+                      <DeleteOutlined />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell />
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={data.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
       <Modal
         title={productName + "-ын " + "ангилал сонгох"}
