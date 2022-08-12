@@ -10,13 +10,13 @@ import {
   MinusCircleOutlined,
   EditOutlined,
   LoadingOutlined,
-  DeleteOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Card } from "antd";
-import { Switch } from "antd";
+import { Switch } from 'antd';
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import { Pagination, Navigation } from "swiper";
 import Paper from "@mui/material/Paper";
@@ -26,82 +26,68 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@material-ui/core/TablePagination";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./styles.css";
 import { CDNURL } from "../../../CDNURL";
 
-import { FaPercent } from "react-icons/fa";
-import { TbCodePlus } from "react-icons/tb";
-import { BsCircleFill } from "react-icons/bs";
+import { FaPercent, } from "react-icons/fa"
+import { TbCodePlus } from "react-icons/tb"
+import { BsCircleFill } from "react-icons/bs"
 
 // const { Column, ColumnGroup } = Table;
 
 const CouponTable = () => {
   const [couponModal, setCouponModal] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [productList, setProductList] = useState([]);
-  const [filteredProductList, setFilteredProductList] = useState([]);
-  const [couponList, setCouponList] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, couponList.length - page * rowsPerPage);
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [productList, setProductList] = useState([])
+  const [filteredProductList, setFilteredProductList] = useState([])
+  const [couponList, setCouponList] = useState([])
 
   useEffect(() => {
     const getProductList = async () => {
-      const { data } = await axios.get("/product");
+      const { data } = await axios.get("/product")
       if (data.success) {
-        setProductList(data.result);
-      }
-    };
-    getProductList();
-    const getCouponList = async () => {
-      const { data } = await axios.get("/coupon");
-      if (data.success) {
-        setCouponList(data.result);
-        console.log(data.result);
-      }
-    };
-    getCouponList();
-  }, [refreshKey]);
+        setProductList(data.result)
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [offer, setOffer] = useState("");
-  const [date, setDate] = useState("");
-  const [couponCode, setCouponCode] = useState("");
-  const [productID, setProductID] = useState("");
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productImage, setProductImage] = useState("");
-  const [editMode, setEditMode] = useState(false);
-  const [editID, setEditID] = useState("");
+      }
+    }
+    getProductList()
+    const getCouponList = async () => {
+      const { data } = await axios.get("/coupon")
+      if (data.success) {
+        setCouponList(data.result)
+        console.log(data.result)
+      }
+    }
+    getCouponList()
+  }, [refreshKey])
+
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const [offer, setOffer] = useState("")
+  const [date, setDate] = useState("")
+  const [couponCode, setCouponCode] = useState("")
+  const [couponType, setCouponType] = useState("")
+  const [editMode, setEditMode] = useState(false)
+  const [editID, setEditID] = useState("")
 
   const handleOk = () => {
-    saveCoupon();
+    saveCoupon()
   };
 
   const handleCancel = () => {
     setCouponModal(false);
-    resetCoupon();
-    setEditMode(false);
+    resetCoupon()
+    setEditMode(false)
   };
 
   const searchingProduct = (prop) => {
     if (productList) {
       const SearchProduct = productList.filter((el) => {
         if (prop === "") {
-          setFilteredProductList([]);
+          setFilteredProductList([])
           return el;
         } else {
           return el.name.toLowerCase().includes(prop);
@@ -112,121 +98,113 @@ const CouponTable = () => {
   };
 
   const handleEdit = () => {
-    editCoupon();
-  };
+    editCoupon()
+  }
 
   const generateCodeForProduct = (length) => {
-    var result = "";
-    var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
     for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      result += characters.charAt(Math.floor(Math.random() *
+        charactersLength));
     }
     return setCouponCode("promo_code-" + result);
-  };
+  }
 
   const resetCoupon = () => {
-    setCouponCode("");
-    setName("");
-    setDate("");
-    setDescription("");
-    setProductID("");
-    setProductImage(null);
-    setProductName("");
-    setProductPrice("");
-    setOffer("");
-    setEditID("");
-  };
+    setCouponCode("")
+    setName("")
+    setDate("")
+    setDescription("")
+    setOffer("")
+    setEditID("")
+  }
 
   const saveCoupon = async () => {
     try {
-      let formdata = new FormData();
-      formdata.append("name", name);
-      formdata.append("description", description);
-      formdata.append("offer", offer);
-      formdata.append("date", date);
-      formdata.append("productID", productID);
-      formdata.append("offerCode", couponCode);
-      const { data } = await axios.post("/coupon", formdata);
+      let formdata = new FormData()
+      formdata.append("name", name)
+      formdata.append("description", description)
+      formdata.append("offer", offer)
+      formdata.append("couponType", couponType)
+      formdata.append("date", date)
+      formdata.append("offerCode", couponCode)
+      const { data } = await axios.post("/coupon", formdata)
       if (data.success) {
-        setCouponModal(false);
-        resetCoupon();
-        setRefreshKey((old) => old + 1);
+        setCouponModal(false)
+        resetCoupon()
+        setRefreshKey(old => old + 1)
         Swal.fire({
           icon: "success",
           title: data.title,
           text: data.result,
-        });
+        })
       }
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: error.message,
-      });
+      })
     }
-  };
+  }
 
   const editCoupon = async () => {
     try {
-      let formdata = new FormData();
-      formdata.append("name", name);
-      formdata.append("description", description);
-      formdata.append("offer", offer);
-      formdata.append("date", date);
-      formdata.append("productID", productID);
-      formdata.append("offerCode", couponCode);
-      const { data } = await axios.put("/coupon/" + editID, formdata);
+      let formdata = new FormData()
+      formdata.append("name", name)
+      formdata.append("description", description)
+      formdata.append("offer", offer)
+      formdata.append("date", date)
+      formdata.append("offerCode", couponCode)
+      const { data } = await axios.put("/coupon/" + editID, formdata)
       if (data.success) {
-        setCouponModal(false);
-        setRefreshKey((old) => old + 1);
-        resetCoupon();
+        setCouponModal(false)
+        setRefreshKey(old => old + 1)
+        resetCoupon()
         Swal.fire({
           icon: "success",
           title: data.title,
           text: data.result,
-        });
+        })
       }
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: error.message,
-      });
+      })
     }
-  };
+  }
 
   const setUpEditCoupon = async (coupon) => {
-    setEditMode(true);
-    setCouponModal(true);
-    setCouponCode(coupon.offerCode);
-    setName(coupon.name);
-    setDescription(coupon.description);
-    setDate(coupon.validUntill);
-    setProductID(coupon?.product?._id);
-    setProductImage(coupon?.product?.thumbnail);
-    setProductName(coupon?.product?.name);
-    setProductPrice(coupon?.product?.price);
-    setOffer(coupon.offer);
-    setEditID(coupon._id);
-  };
+    setEditMode(true)
+    setCouponModal(true)
+    setCouponCode(coupon.offerCode)
+    setName(coupon.name)
+    setDescription(coupon.description)
+    setDate(coupon.validUntill)
+    setCouponType(coupon.couponType)
+    setOffer(coupon.offer)
+    setEditID(coupon._id)
+  }
 
   const changeStateOfCoupon = async (id) => {
-    const { data } = await axios.post("/couponValue/" + id);
+    const { data } = await axios.post("/couponValue/" + id)
     if (data.success) {
-      setRefreshKey((old) => old + 1);
+      setRefreshKey(old => old + 1)
     }
-  };
+  }
 
   const removeCoupon = async (id) => {
-    const { data } = await axios.delete("/coupon/" + id);
+    const { data } = await axios.delete("/coupon/" + id)
     if (data.success) {
       Swal.fire({
         icon: "success",
-        title: "Устгагдсан",
-      });
-      setRefreshKey((old) => old + 1);
+        title: "Устгагдсан"
+      })
+      setRefreshKey(old => old + 1)
     }
-  };
+  }
 
   return (
     <Card
@@ -235,145 +213,46 @@ const CouponTable = () => {
       extra={
         <Button
           onClick={() => {
-            setCouponModal(true);
-            setEditMode("");
+            setCouponModal(true)
+            setEditMode("")
           }}
-          icon={<PlusOutlined />}
+          icon={< PlusOutlined />}
         >
           Купон нэмэх
-        </Button>
+        </Button >
       }
     >
-      <Modal
-        title="Купон нэмэх"
-        visible={couponModal}
-        okText={editMode ? "Хадгалах" : "Бүртгэх"}
-        cancelText={"Болих"}
-        onOk={editMode ? () => handleEdit() : () => handleOk()}
-        onCancel={handleCancel}
-      >
+      <Modal title="Купон нэмэх" visible={couponModal} okText={editMode ? "Хадгалах" : "Бүртгэх"} cancelText={"Болих"} onOk={editMode ? () => handleEdit() : () => handleOk()} onCancel={handleCancel}>
         <div className="w-full">
-          <input
-            autoCapitalize="none"
-            onChange={(e) => searchingProduct(e.target.value)}
-            type={"search"}
-            className="w-full p-2 border rounded-sm"
-            placeholder="Бүтээгдэхүүн хайх"
-          />
-          <div
-            className={`w-full h-96 overflow-auto ${
-              filteredProductList.length === 0 && "hidden"
-            }`}
-          >
-            {filteredProductList.length !== 0 &&
-              filteredProductList.map((item, index) => (
-                <h1
-                  onClick={() => {
-                    setFilteredProductList([]);
-                    setProductID(item._id);
-                    setProductName(item.name);
-                    setProductPrice(item.price);
-                    setProductImage(item.thumbnail);
-                  }}
-                  className="w-full p-2 hover:bg-gray-200 cursor-pointer"
-                >
-                  {item.name}
-                </h1>
-              ))}
-          </div>
-        </div>
-        <div className="w-full">
-          <div className="w-full flex flex-col">
-            <div className="w-full flex flex-col justify-center items-center">
-              <h1>{productName}</h1>
-              <h1>{productPrice}</h1>
-            </div>
-            {productName && (
-              <div className="w-5/6 mx-auto rounded-xl border border-black my-5 justify-center item-center flex flex-row p-2 h-36">
-                <div className="w-2/5 flex justify-center items-center">
-                  <h1 className="text-green-500">{name}</h1>
-                </div>
-                <div className="h-full w-[1px] bg-black my-auto mx-1"></div>
-                <div className="w-4/6 flex ">
-                  <div className="w-2/6 flex justify-center items-center">
-                    {productImage && (
-                      <img
-                        src={`${CDNURL}/${productImage}`}
-                        className="object-"
-                        alt="product"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col w-4/6 flex justify-center items-center">
-                    {offer && (
-                      <h1 className="text-red-500">
-                        {Math.round((productPrice * offer) / 100)}
-                      </h1>
-                    )}
-                    {offer && <h1 className="text-red-500">{offer + "%"}</h1>}
-                    {couponCode && <h1 className="text-black">{couponCode}</h1>}
-                    {date && (
-                      <h1 className="text-black text-[10px]">
-                        Хүчинтэй хугацаа: {date}
-                      </h1>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <input
-            maxLength={10}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            type={"text"}
-            className="w-full border p-2 my-2"
-            placeholder="coupon name"
-          />
-          <input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            type={"text"}
-            className="w-full border p-2 my-2"
-            placeholder="coupon description"
-          />
-          <input
-            value={offer}
-            onChange={(e) => {
-              const limit = 3;
-              setOffer(e.target.value.slice(0, limit));
-              if (e.target.value >= 100) {
-                setOffer("");
-                Swal.fire({
-                  icon: "warning",
-                  title: "100% гаас доош байх хэрэгтэй",
-                });
-              }
-            }}
-            type={"number"}
-            className="w-full border p-2 my-2"
-            placeholder="coupon offer"
-          />
+          <input maxLength={10} value={name} onChange={(e) => setName(e.target.value)} type={"text"} className="w-full border p-2 my-2" placeholder="coupon name" />
+          <input value={description} onChange={(e) => setDescription(e.target.value)} type={"text"} className="w-full border p-2 my-2" placeholder="coupon description" />
+          <select onChange={(e) => setCouponType(e.target.value)} className="w-full p-2 border">
+            <option label="Купон төрөл сонгох" value={"notchosen"} />
+            <option label="Хувиар" value={"percentage"} />
+            <option label="Мөнгөөр" value={"amount"} />
+          </select>
+          {
+            couponType === "percentage" ?
+              <input value={offer} onChange={(e) => {
+                const limit = 3;
+                setOffer(e.target.value.slice(0, limit))
+                if (e.target.value >= 100) {
+                  setOffer("")
+                  Swal.fire({
+                    icon: "warning",
+                    title: "100% гаас доош байх хэрэгтэй"
+                  })
+                }
+              }} type={"number"} className="w-full border p-2 my-2" placeholder={`${couponType === "percentage" && "coupon offer %"}`} />
+              :
+              <input value={offer} onChange={(e) => setOffer(e.target.value)} type={"number"} className="w-full border p-2 my-2" placeholder={`${couponType === "amount" && "coupon offer ₮"}`} />
+          }
           <label>Хүчинтэй хугацаа</label>
-          <input
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            type={"date"}
-            className="w-full border p-2 my-2"
-            placeholder="coupon valid through"
-          />
+          <input value={date} onChange={(e) => setDate(e.target.value)} type={"date"} className="w-full border p-2 my-2" placeholder="coupon valid through" />
           <label>Купон код</label>
           <div className="w-full flex justify-center items-center p-2 gap-1">
-            <input
-              className="w-11/12 border p-2"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
-              placeholder="Coupon Code"
-            />
-            <button
-              onClick={() => generateCodeForProduct(7)}
-              className="w-1/12 border p-2 hover:bg-green-400 cursor-pointer text-xl"
-            >
+            <input className="w-11/12 border p-2" value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Coupon Code" />
+            <button onClick={() => generateCodeForProduct(7)} className="w-1/12 border p-2 hover:bg-green-400 cursor-pointer text-xl">
               <TbCodePlus />
             </button>
           </div>
@@ -386,100 +265,61 @@ const CouponTable = () => {
               <TableCell className="tableCell">Идэвх</TableCell>
               <TableCell className="tableCell">Нэр</TableCell>
               <TableCell className="tableCell">Тайлбар</TableCell>
-              <TableCell className="tableCell">Бүтээгдэхүүн</TableCell>
-              <TableCell className="tableCell">Үнэ </TableCell>
-              <TableCell className="tableCell">Хувь</TableCell>
-              <TableCell className="tableCell">Хөнгөлөгдсөн үнэ</TableCell>
+              <TableCell className="tableCell">Купон төрөл</TableCell>
+              <TableCell className="tableCell">Хөнгөлөлт</TableCell>
               <TableCell className="tableCell">Хүчинтэй хугацаа</TableCell>
               <TableCell className="tableCell">Үйлдэл</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {couponList
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow
-                  key={row._id}
-                  className={`${row.isActive ? "opacity-1" : "opacity-20"}`}
-                >
-                  <TableCell className="tableCell">
-                    <div className="flex flex-col justify-center items-center gap-2">
-                      <div>
-                        {row.isActive ? (
-                          <BsCircleFill color="#77c66f" />
-                        ) : (
-                          <BsCircleFill color="red" />
-                        )}
-                      </div>
-                      <div>
-                        <Switch
-                          defaultChecked={row.isActive}
-                          onChange={() => changeStateOfCoupon(row._id)}
-                        />
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <div>{row.name}</div>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <div>{row.description}</div>
-                  </TableCell>
-
-                  <TableCell className="tableCell">
-                    <h2>{row?.product?.name}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row?.product?.price}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.offer ? row?.offer + "%" : "байхгүй"}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>
-                      {row.offer
-                        ? Math.round(
-                            row?.product?.price -
-                              (row?.product?.price * row?.offer) / 100
-                          )
-                        : "байхгүй"}
-                    </h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
-                    <h2>{row.validUntill}</h2>
-                  </TableCell>
-                  <TableCell className="tableCell">
+            {couponList.map((row) => (
+              <TableRow key={row._id} className={`${row.isActive ? "opacity-1" : "opacity-20"}`}>
+                <TableCell className="tableCell">
+                  <div className="flex flex-col justify-center items-center gap-2">
                     <div>
-                      <button
-                        onClick={() => setUpEditCoupon(row)}
-                        className="mx-2 text-xl text-yellow-400"
-                      >
-                        <EditOutlined />
-                      </button>
-                      <button
-                        onClick={() => removeCoupon(row._id)}
-                        className="mx-2 text-xl text-red-400"
-                      >
-                        <DeleteOutlined />
-                      </button>
+                      {row.isActive ? <BsCircleFill color="#77c66f" /> : <BsCircleFill color="red" />}
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    <div>
+                      <Switch defaultChecked={row.isActive} onChange={() => changeStateOfCoupon(row._id)} />
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <div>
+                    {row.name}
+                  </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <div>
+                    {row.description}
+                  </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row?.couponType === "percentage" && "Хувиар"}</h2>
+                  <h2>{row?.couponType === "amount" && "Мөнгөн дүн"}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.couponType === "percentage" && row?.offer + "%"}</h2>
+                  <h2>{row.couponType === "amount" && row?.offer + "₮"}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <h2>{row.validUntill}</h2>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <div>
+                    <button onClick={() => setUpEditCoupon(row)} className="mx-2 text-xl text-yellow-400"><EditOutlined /></button>
+                    <button onClick={() => removeCoupon(row._id)} className="mx-2 text-xl text-red-400"><DeleteOutlined /></button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={couponList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
       </TableContainer>
-    </Card>
+
+    </Card >
   );
 };
 
 export default CouponTable;
+
