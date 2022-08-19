@@ -42,19 +42,19 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/banner_images" element={<Bannerimages />} />
-        <Route path="/brand" element={<Brand />} />
-        <Route path="/category" element={<Category />} />
-        <Route path="/user" element={<User />} />
-        <Route path="/product" element={<Product />} />
-        <Route path="/coupon" element={<Coupon />} />
-        <Route path="/order" element={<Orders />} />
-        <Route path="/news_category" element={<NewsCategory />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/online_credit" element={<Online_credit />} />
+        <Route path="/admin/*" element={<App />} />
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/home" element={<Home />} />
+        <Route path="/admin/banner_images" element={<Bannerimages />} />
+        <Route path="/admin/brand" element={<Brand />} />
+        <Route path="/admin/category" element={<Category />} />
+        <Route path="/admin/user" element={<User />} />
+        <Route path="/admin/product" element={<Product />} />
+        <Route path="/admin/coupon" element={<Coupon />} />
+        <Route path="/admin/order" element={<Orders />} />
+        <Route path="/admin/news_category" element={<NewsCategory />} />
+        <Route path="/admin/news" element={<News />} />
+        <Route path="/admin/online_credit" element={<Online_credit />} />
       </Routes>
     </BrowserRouter>
   </Provider>,
