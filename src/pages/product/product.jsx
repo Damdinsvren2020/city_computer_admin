@@ -24,13 +24,13 @@ const Product = () => {
           if (data.success) {
             setUser(data.user);
             if (data.role === "user") {
-              return history("/home");
+              return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/product");
+              return history("/admin/product");
             }
           } else {
-            history("/Login");
+            history("/admin/Login");
           }
         } catch (error) {
           console.log(error);
@@ -38,7 +38,7 @@ const Product = () => {
       };
       authorize();
     } else {
-      history("/Login");
+      history("/admin/Login");
     }
   }, [history, refresh]);
   return (

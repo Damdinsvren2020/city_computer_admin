@@ -4,8 +4,10 @@ import "./dashboard.scss";
 import Widget from "../../components/widget/Widget";
 import Featured from "../../components/featured/Featured";
 import Chart from "../../components/chart/Chart";
+import { useEffect } from "react";
 
 const dashboard = () => {
+
   return (
     <div className="dashboard">
       <div className="dashboardContainer">

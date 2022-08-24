@@ -24,13 +24,13 @@ const Home_banner = () => {
           if (data.success) {
             setUser(data.user);
             if (data.role === "user") {
-              return history("/home");
+              return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/banner_images");
+              return history("/admin/banner_images");
             }
           } else {
-            history("/Login");
+            history("/admin/Login");
           }
         } catch (error) {
           console.log(error);
@@ -38,7 +38,7 @@ const Home_banner = () => {
       };
       authorize();
     } else {
-      history("/Login");
+      history("/admin/Login");
     }
   }, [history, refresh]);
   return (

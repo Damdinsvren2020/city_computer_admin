@@ -42,10 +42,10 @@ const Login = () => {
   useEffect(() => {
     if (data) {
       localStorage.setItem("token", data);
-      navigate("/home");
+      navigate("/admin/home");
     }
     if (localStorage.token) {
-      navigate("/home");
+      navigate("/admin/home");
     }
   }, [data, navigate]);
 

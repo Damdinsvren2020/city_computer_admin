@@ -35,13 +35,13 @@ const Home = () => {
           if (data.success) {
             setUser(data.user);
             if (data.role === "user") {
-              return history("/home");
+              return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/home");
+              return history("/admin/home");
             }
           } else {
-            history("/Login");
+            history("/admin/Login");
           }
         } catch (error) {
           console.log(error);
@@ -49,7 +49,7 @@ const Home = () => {
       };
       authorize();
     } else {
-      history("/Login");
+      history("/admin/Login");
     }
   }, [history, refresh]);
 

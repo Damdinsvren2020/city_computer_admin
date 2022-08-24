@@ -29,7 +29,7 @@ const token = localStorage.getItem("token");
 
 axios.defaults.headers.post["Content-Type"] = "multipart/formdata";
 axios.defaults.headers.common["authorization"] = "Bearer " + token;
-axios.defaults.baseURL = "http://localhost:3001/api";
+axios.defaults.baseURL = "http://139.59.235.133:80/api";
 
 const rootReducer = combineReducers({
   introduction: introduction,
@@ -42,7 +42,7 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
-        <Route path="/admin/*" element={<App />} />
+        <Route path="/admin/" element={<App />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/home" element={<Home />} />
         <Route path="/admin/banner_images" element={<Bannerimages />} />

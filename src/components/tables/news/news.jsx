@@ -162,7 +162,7 @@ const Datatable = () => {
       confirmButtonText: "Устгах",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const { data } = await axios.delete(`/news/${news._id}`);
+        const { data } = await axios.delete(`/singlenews/${news._id}`);
         if (data.success) {
           setRefreshKey((old) => old + 1);
           resetform();

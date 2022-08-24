@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const logOutUser = () => {
-    navigate("/");
+    navigate("/admin/login");
     localStorage.clear();
   };
 
