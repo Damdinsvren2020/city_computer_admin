@@ -171,11 +171,11 @@ const Datatable = () => {
     <Card
       title="Хэрэглэгч"
       style={{ marginLeft: "20px" }}
-      extra={
-        <Button onClick={() => showModal(true)} icon={<PlusOutlined />}>
-          Хэрэглэгч нэмэх
-        </Button>
-      }
+      // extra={
+      //   <Button onClick={() => showModal(true)} icon={<PlusOutlined />}>
+      //     Хэрэглэгч нэмэх
+      //   </Button>
+      // }
     >
       <Table dataSource={data}>
         <Column title="Хэрэглэгчийн нэр" dataIndex="username" key="username" />

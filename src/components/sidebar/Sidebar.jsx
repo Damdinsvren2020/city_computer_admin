@@ -79,13 +79,13 @@ const Sidebar = () => {
               </Link>
             </Menu.Item>
           </Menu.ItemGroup>
-          <Menu.ItemGroup key="g1" title="Онлайн лизинг">
+          {/* <Menu.ItemGroup key="g1" title="Онлайн лизинг">
             <Menu.Item icon={<RiExchangeDollarFill />} key="/admin/online_credit">
               <Link to="/admin/online_credit">
                 <span>Онлайн лизинг</span>
               </Link>
             </Menu.Item>
-          </Menu.ItemGroup>
+          </Menu.ItemGroup> */}
         </Menu>
       </Sider>
     </Layout>

@@ -50,70 +50,72 @@ const Login = () => {
   }, [data, navigate]);
 
   return (
-    <div className="login">
-      <div>
-        <h2 className="text-center bold">City computer</h2>
-      </div>
-      <Form
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        initialValues={{
-          remember: true,
-        }}
-        autoComplete="off"
-      >
-        <Form.Item
-          label="Email "
-          name={"email"}
-          rules={[{ required: true, message: "  Имэйл хаяг оруулна уу" }]}
-        >
-          <Input
-            placeholder="Таны email "
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            prefix={<UserOutlined />}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Нууц үг"
-          autoComplete={false}
-          rules={[
-            {
-              required: true,
-              message: "Та нууц үг ээ оруулна уу!",
-            },
-          ]}
-        >
-          <Input.Password
-            autoComplete="off"
-            value={password}
-            placeholder="Нууц үг"
-            onChange={(e) => setPassword(e.target.value)}
-            prefix={<LockOutlined />}
-          />
-        </Form.Item>
-        <Form.Item
+    <div className="login-container h-screen">
+      <div className="login">
+        <div>
+          <h2 className="text-center bold">City computer</h2>
+        </div>
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
           wrapperCol={{
-            offset: 8,
             span: 16,
           }}
+          initialValues={{
+            remember: true,
+          }}
+          autoComplete="off"
         >
-          <Button
-            className="button"
-            onClick={() => submitLogin()}
-            type="primary"
-            htmlType="submit"
+          <Form.Item
+            label="Email "
+            name={"email"}
+            rules={[{ required: true, message: "  Имэйл хаяг оруулна уу" }]}
           >
-            Нэвтрэх
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input
+              placeholder="Таны email "
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              prefix={<UserOutlined />}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Нууц үг"
+            autoComplete={false}
+            rules={[
+              {
+                required: true,
+                message: "Та нууц үг ээ оруулна уу!",
+              },
+            ]}
+          >
+            <Input.Password
+              autoComplete="off"
+              value={password}
+              placeholder="Нууц үг"
+              onChange={(e) => setPassword(e.target.value)}
+              prefix={<LockOutlined />}
+            />
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button
+              className="button"
+              onClick={() => submitLogin()}
+              type="primary"
+              htmlType="submit"
+            >
+              Нэвтрэх
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };
