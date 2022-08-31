@@ -27,7 +27,7 @@ const Online_credit = () => {
               return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/admin/banner_images");
+              return history("/admin/news_category");
             }
           } else {
             history("/Login");
@@ -36,6 +36,7 @@ const Online_credit = () => {
           console.log(error);
         }
       };
+      authorize()
     }
   }, [history, refresh]);
   return (

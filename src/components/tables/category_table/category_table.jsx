@@ -28,6 +28,8 @@ const Datatable = () => {
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(false);
 
+  const [subModal, setSubModal] = useState(false)
+
   const [dropDownAngilal, setDropDownAngilal] = useState(false);
   const [matchingIndex, setMatchingIndex] = useState("");
   const [Name, setName] = useState("");
@@ -284,17 +286,25 @@ const Datatable = () => {
   return (
     <Card
       style={{ marginLeft: "20px" }}
-      extra={
-        <Button
+      title={
+        <button
+          className=" text-md p-2 flex justify-center items-center mx border rounded-md"
           onClick={() => {
             showModal(true);
             seteditCategory(false);
             resetCategory();
           }}
-          icon={<PlusOutlined />}
         >
-          Категори нэмэх
-        </Button>
+          <PlusOutlined />  Категори нэмэх
+        </button>
+      }
+      extra={
+        <button
+          onClick={() => setSubModal(true)}
+          className="text-purple-500 text-xl p-2 flex justify-center items-center mx border rounded-md"
+        >
+          <PlusOutlined /> Ангилалууд
+        </button>
       }
     >
       <TableContainer component={Paper} className="table">
@@ -361,8 +371,101 @@ const Datatable = () => {
       </TableContainer>
 
       <Modal
+        title={"Ангилалууд"}
+        width={600}
+        visible={subModal}
+        confirmLoading={confirmLoading}
+        onCancel={() => setSubModal(false)}
+        cancelText={"Болих"}
+        okText={"Дуусгах"}
+        onOk={() => setSubModal(false)}
+      >
+        <div className="w-full h-[500px] overflow-auto">
+          <input
+            autoCapitalize="none"
+            onChange={(e) => searchingCategory(e.target.value)}
+            type={"search"}
+            className="w-full p-2 border rounded-sm"
+            placeholder="Ангилал хайх"
+          />
+          <div className="w-full h-[700px] overflow-auto">
+            {FilteredCategory.map((item, index) => (
+              <div key={index} className="w-full border p-2 my-2 mx-auto">
+                <button
+                  onClick={() => {
+                    setDropDownAngilal(true);
+                    setMatchingIndex(index);
+                  }}
+                  className="w-full flex flex-row gap-2 items-center"
+                >
+                  <h1 className="text-black text-lg">
+                    <PlusOutlined />
+                  </h1>
+                  <h1 className="text-black text-lg">{item.name}</h1>
+                </button>
+                {matchingIndex === index && dropDownAngilal && (
+                  <div className="w-full h-96 overflow-auto">
+                    <div className="w-full flex flex-col gap-1">
+                      <div className="w-full flex flex-col gap-2">
+                        <input
+                          value={subAngilalName}
+                          onChange={(e) =>
+                            setSubAngilalName(e.target.value)
+                          }
+                          className="w-full border p-2"
+                          placeholder="Дэд ангилал нэр"
+                        />
+                        <input
+                          value={subAngilalDesc}
+                          onChange={(e) =>
+                            setSubAngilalDesc(e.target.value)
+                          }
+                          className="w-full border p-2"
+                          placeholder="Дэд ангилал тайлбар"
+                        />
+                        <button
+                          onClick={
+                            editSubAngilal
+                              ? () => SubAngilalEdit()
+                              : () => createSubAngilal(item._id)
+                          }
+                          className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
+                        >
+                          {" "}
+                          {editSubAngilal ? (
+                            <EditOutlined />
+                          ) : (
+                            <PlusOutlined />
+                          )}
+                        </button>
+                      </div>
+                      <div className="w-full ">
+                        {item?.SubAngilal?.map((item, index) => (
+                          <div className="w-full p-2 hover:bg-gray-200 flex justify-between ">
+                            <h1>{item.name}</h1>
+                            <div className="gap-2 w-1/6 flex justify-evenly items-center">
+                              <button className="text-yellow-400 text-xl" onClick={() => setUpEditSub(item)}>
+                                <EditOutlined />
+                              </button>
+                              <button className="text-red-400 text-xl" onClick={() => deleteSubAngilal(item)}>
+                                <DeleteOutlined />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
         title={editCategory ? "Ангилал засах" : "Ангилал нэмэх"}
-        width={1000}
+        width={500}
         visible={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -438,87 +541,6 @@ const Datatable = () => {
               </div>
             </div>
           </div>
-          {editCategory === false && (
-            <div className="w-3/6">
-              <input
-                autoCapitalize="none"
-                onChange={(e) => searchingCategory(e.target.value)}
-                type={"search"}
-                className="w-full p-2 border rounded-sm"
-                placeholder="Ангилал хайх"
-              />
-              <div className="w-full h-[700px] overflow-auto">
-                {FilteredCategory.map((item, index) => (
-                  <div key={index} className="w-full border p-2 my-2 mx-auto">
-                    <button
-                      onClick={() => {
-                        setDropDownAngilal(true);
-                        setMatchingIndex(index);
-                      }}
-                      className="w-full flex flex-row gap-2 items-center"
-                    >
-                      <h1 className="text-black text-lg">
-                        <PlusOutlined />
-                      </h1>
-                      <h1 className="text-black text-lg">{item.name}</h1>
-                    </button>
-                    {matchingIndex === index && dropDownAngilal && (
-                      <div className="w-full h-96 overflow-auto">
-                        <div className="w-full flex flex-col gap-1">
-                          <div className="w-full flex flex-col gap-2">
-                            <input
-                              value={subAngilalName}
-                              onChange={(e) =>
-                                setSubAngilalName(e.target.value)
-                              }
-                              className="w-full border p-2"
-                              placeholder="Дэд ангилал нэр"
-                            />
-                            <input
-                              value={subAngilalDesc}
-                              onChange={(e) =>
-                                setSubAngilalDesc(e.target.value)
-                              }
-                              className="w-full border p-2"
-                              placeholder="Дэд ангилал тайлбар"
-                            />
-                            <button
-                              onClick={
-                                editSubAngilal
-                                  ? () => SubAngilalEdit()
-                                  : () => createSubAngilal(item._id)
-                              }
-                              className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
-                            >
-                              {" "}
-                              {editSubAngilal ? (
-                                <EditOutlined />
-                              ) : (
-                                <PlusOutlined />
-                              )}
-                            </button>
-                          </div>
-                          <div className="w-full ">
-                            {item?.SubAngilal?.map((item, index) => (
-                              <div className="w-full p-2 hover:bg-gray-200 flex justify-between ">
-                                <h1>{item.name}</h1>
-                                <button onClick={() => setUpEditSub(item)}>
-                                  Edit
-                                </button>
-                                <button onClick={() => deleteSubAngilal(item)}>
-                                  Delete
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </Modal>
     </Card>

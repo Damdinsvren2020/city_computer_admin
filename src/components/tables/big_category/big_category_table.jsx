@@ -250,12 +250,12 @@ const Datatable = () => {
       style={{ marginLeft: "20px" }}
       title={<input type={"search"} onChange={(e) => searchingBigCategory(e.target.value)} placeholder="Хайх..." className="p-2 border rounded-md" />}
       extra={
-        <Button
+        <button
+          className="text-md p-2 flex justify-center items-center mx border rounded-md"
           onClick={() => setIsModalVisible(true)}
-          icon={<PlusOutlined />}
         >
-          Ангилал заах
-        </Button>
+          <PlusOutlined /> Ангилал заах
+        </button>
       }
     >
       <TableContainer component={Paper} className="table">
@@ -291,7 +291,7 @@ const Datatable = () => {
                       <TableCell className="tableCell">
                         <div className="w-[300px] h-[100px] gap-2 overflow-auto flex flex-wrap">
                           {row?.angilals?.map((item, index) => (
-                            <h1 className="bg-gray-300/50 rounded-md p-2" key={index}>{item.name}</h1>
+                            <h1 className="bg-gray-300/50 rounded-md p-2 h-10" key={index}>{item.name}</h1>
                           ))}
                         </div>
                       </TableCell>

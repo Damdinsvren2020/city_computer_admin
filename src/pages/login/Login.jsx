@@ -5,6 +5,7 @@ import "./login.css";
 import axios from "axios";
 import { useEffect } from "react";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { AiOutlineLoading3Quarters } from "react-icons/ai"
 
 import Swal from "sweetalert2";
 
@@ -12,16 +13,27 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState("");
   const navigate = useNavigate();
 
   const submitLogin = async () => {
     try {
-      const { data } = await axios.post("login", {
+      setLoading(true)
+      const { data } = await axios.post("/login", {
         email: email,
         password: password.trim(),
       });
-      if (data.token) {
+      if (!data.success) {
+        Swal.fire({
+          title: data.result,
+          icon: "error",
+        });
+        setLoading(false)
+      }
+      if (data.success) {
+        console.log(data.token)
+        setLoading(false)
         setSuccess(true);
         setData(data.token);
         Swal.fire({
@@ -32,6 +44,7 @@ const Login = () => {
         });
       }
     } catch (error) {
+      setLoading(false)
       Swal.fire({
         title: error.message,
         icon: "warning",
@@ -105,14 +118,24 @@ const Login = () => {
               span: 16,
             }}
           >
-            <Button
-              className="button"
-              onClick={() => submitLogin()}
-              type="primary"
-              htmlType="submit"
-            >
-              Нэвтрэх
-            </Button>
+            {
+              loading ?
+                <div className=" flex justify-center items-center">
+                  <div className="animate-spin">
+                    <AiOutlineLoading3Quarters size={14} color="black" />
+                  </div>
+                </div>
+                :
+                <Button
+                  className="button"
+                  onClick={() => submitLogin()}
+                  type="primary"
+                  htmlType="submit"
+                >
+
+                  <h1>нэвтрэх</h1>
+                </Button>
+            }
           </Form.Item>
         </Form>
       </div>

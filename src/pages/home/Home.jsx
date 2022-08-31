@@ -4,16 +4,11 @@ import "./home.scss";
 // import Widget from "../../components/widget/Widget";
 // import Featured from "../../components/featured/Featured";
 // import Chart from "../../components/chart/Chart";
-import User from "../users/User";
-import Dashboard from "../../components/dashboard/dashboard";
-import Category from "../category/category";
-import Product from "../product/product";
-import Banner from "../home_banner/Home_banner";
-import Brand from "../brand/brand";
-import Banner_images from "../banner_images/banner_images";
+import Navbar from "../../components/navbar/Navbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Home_banner from "../banner_images/banner_images";
 
 const Home = () => {
   const [whichComponent, setWhichComponent] = useState("");
@@ -38,7 +33,7 @@ const Home = () => {
               return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/admin/home");
+              return history("/admin/banner_images");
             }
           } else {
             history("/admin/Login");
@@ -57,6 +52,10 @@ const Home = () => {
     <div className="flex">
       <div className="flex flex-col h-screen">
         <Sidebar />
+        {/* <div className="w-full bg-white	">
+          <Navbar />
+
+        </div> */}
       </div>
     </div>
   );

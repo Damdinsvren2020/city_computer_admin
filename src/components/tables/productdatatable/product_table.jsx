@@ -74,6 +74,7 @@ const Datatable = () => {
       const { data } = await axios.get("/product");
       if (data.success) {
         setData(data.result);
+        console.log(data.result)
       }
     };
     getProducts();
@@ -228,7 +229,7 @@ const Datatable = () => {
     }
     setEditLoading(true);
     setProductEditId(item._id);
-    setSubID(item?.SubID?._id);
+    setSubID(item.SubID._id);
     setImage1(item.avatar);
     setImage2(item.thumbnail);
     setImages(item.imagesProduct);
@@ -239,6 +240,10 @@ const Datatable = () => {
     setProductQuantity(item.quantity);
     setProductSKU(item.SKU);
     setProductSpecList(item.specs);
+    setImageNew(false)
+    setImageNew1(false)
+    setImageNew2(false)
+
     const { data } = await axios.get("/productSub/" + item.SubID._id);
     if (data.success) {
       setEditLoading(false);
@@ -394,12 +399,12 @@ const Datatable = () => {
       title="Бүтээгдхүүн"
       style={{ marginLeft: "20px" }}
       extra={
-        <Button
+        <button
           onClick={() => setCreateProductModal(true)}
-          icon={<PlusOutlined />}
+          className=" text-md p-2 flex justify-center items-center mx border rounded-md"
         >
-          Бүтээгдхүүн нэмэх
-        </Button>
+          <PlusOutlined /> Бүтээгдхүүн нэмэх
+        </button>
       }
     >
       {editLoading && (
@@ -432,10 +437,7 @@ const Datatable = () => {
               .map((row) => (
                 <TableRow key={row._id}>
                   <TableCell className="tableCell">
-                    <div>
-                      {row?.angilalId === null ? "Ангилалгүй" : "Ангилалтай"}
-                    </div>
-                    <div>{row?.SubID?.name}</div>
+                    <div>{row.SubID.name !== null ? "Ангилалтай" : "Ангилалгүй"}</div>
                   </TableCell>
                   <TableCell className="tableCell">
                     <div>
@@ -651,7 +653,7 @@ const Datatable = () => {
         onOk={productEdit ? () => editProduct() : () => registerProduct()}
         visible={createProductModal}
       >
-        <div className="w-full h-[500px]">
+        <div className="w-full h-[600px]">
           <div className="w-full p-2 flex flex-col relative">
             <input
               onChange={(e) => searchingCategory(e.target.value)}

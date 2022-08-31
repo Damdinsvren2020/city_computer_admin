@@ -27,7 +27,7 @@ const Orders = () => {
               return history("/home");
             }
             if (data.role === "admin") {
-              return history("/banner_images");
+              return history("/admin/news");
             }
           } else {
             history("/Login");
@@ -36,6 +36,7 @@ const Orders = () => {
           console.log(error);
         }
       };
+      authorize()
     }
   }, [history, refresh]);
   return (
