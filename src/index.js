@@ -22,6 +22,7 @@ import Orders from "./pages/orders/order";
 import NewsCategory from "./pages/news_category/news_category.jsx";
 import News from "./pages/news/news.jsx";
 import Online_credit from "./pages/online_credit/online_credit";
+import BigCategory from "./pages/BigCategory.js/BigCategory";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -29,7 +30,7 @@ const token = localStorage.getItem("token");
 
 axios.defaults.headers.post["Content-Type"] = "multipart/formdata";
 axios.defaults.headers.common["authorization"] = "Bearer " + token;
-axios.defaults.baseURL = "http://139.59.235.133:80/api";
+axios.defaults.baseURL = "http://localhost:80/api";
 
 const rootReducer = combineReducers({
   introduction: introduction,
@@ -42,12 +43,13 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
-        <Route path="/admin/" element={<App />} />
+        <Route path="/" element={<App />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin/home" element={<Home />} />
         <Route path="/admin/banner_images" element={<Bannerimages />} />
         <Route path="/admin/brand" element={<Brand />} />
         <Route path="/admin/category" element={<Category />} />
+        <Route path="/admin/bigcategory" element={<BigCategory />} />
         <Route path="/admin/user" element={<User />} />
         <Route path="/admin/product" element={<Product />} />
         <Route path="/admin/coupon" element={<Coupon />} />

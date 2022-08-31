@@ -53,36 +53,11 @@ const Home = () => {
     }
   }, [history, refresh]);
 
-  const RenderComponent = () => {
-    switch (whichComponent) {
-      case "Хэрэглэгч":
-        return <User />;
-      case "Ангилал":
-        return <Category />;
-      case "Бүтээгдхүүн":
-        return <Product />;
-      case "Баннер":
-        return <Banner />;
-      case "Брэнд":
-        return <Brand />;
-      case "Баннер зурагнууд":
-        return <Banner_images />;
-      case "Dashboard":
-        return <Dashboard />;
-      default:
-        return <Dashboard />;
-    }
-  };
-
   return (
     <div className="flex">
       <div className="flex flex-col h-screen">
-        <Sidebar
-          whichComponent={whichComponent}
-          setWhichComponent={setWhichComponent}
-        />
+        <Sidebar />
       </div>
-      {RenderComponent()}
     </div>
   );
 };

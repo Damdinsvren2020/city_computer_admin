@@ -41,6 +41,11 @@ const Sidebar = () => {
                 <span>Брэнд</span>
               </Link>
             </Menu.Item>
+            <Menu.Item icon={<RiFilter2Line />} key="/admin/bigcategory">
+              <Link to="/admin/bigcategory">
+                <span>Ангилал ангилах</span>
+              </Link>
+            </Menu.Item>
             <Menu.Item icon={<RiFilter2Line />} key="/admin/category">
               <Link to="/admin/category">
                 <span>Ангилал</span>

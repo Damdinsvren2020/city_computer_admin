@@ -24,10 +24,10 @@ const Orders = () => {
           if (data.success) {
             setUser(data.user);
             if (data.role === "user") {
-              return history("/home");
+              return history("/admin/home");
             }
             if (data.role === "admin") {
-              return history("/banner_images");
+              return history("/admin/banner_images");
             }
           } else {
             history("/Login");
