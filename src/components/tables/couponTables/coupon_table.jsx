@@ -73,6 +73,8 @@ const CouponTable = () => {
   const [editMode, setEditMode] = useState(false)
   const [editID, setEditID] = useState("")
 
+  const [copy, setCopy] = useState("Copy")
+
   const handleOk = () => {
     saveCoupon()
   };
@@ -206,6 +208,7 @@ const CouponTable = () => {
     }
   }
 
+
   return (
     <Card
       title="Купон"
@@ -264,6 +267,7 @@ const CouponTable = () => {
             <TableRow>
               <TableCell className="tableCell">Идэвх</TableCell>
               <TableCell className="tableCell">Нэр</TableCell>
+              <TableCell className="tableCell">Ашиглах код</TableCell>
               <TableCell className="tableCell">Тайлбар</TableCell>
               <TableCell className="tableCell">Купон төрөл</TableCell>
               <TableCell className="tableCell">Хөнгөлөлт</TableCell>
@@ -288,6 +292,14 @@ const CouponTable = () => {
                   <div>
                     {row.name}
                   </div>
+                </TableCell>
+                <TableCell className="tableCell">
+                  <button onClick={() => {
+                    navigator.clipboard.writeText(row.offerCode)
+                    setCopy("Copied!")
+                  }}>
+                    {row.offerCode} {copy}
+                  </button>
                 </TableCell>
                 <TableCell className="tableCell">
                   <div>
