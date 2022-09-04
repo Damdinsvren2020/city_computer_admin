@@ -23,6 +23,7 @@ import NewsCategory from "./pages/news_category/news_category.jsx";
 import News from "./pages/news/news.jsx";
 import Online_credit from "./pages/online_credit/online_credit";
 import BigCategory from "./pages/BigCategory.js/BigCategory";
+import Invoice from "./pages/Invoice/Invoice";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -30,7 +31,7 @@ const token = localStorage.getItem("token");
 
 axios.defaults.headers.post["Content-Type"] = "multipart/formdata";
 axios.defaults.headers.common["authorization"] = "Bearer " + token;
-axios.defaults.baseURL = "http://localhost:80/api";
+axios.defaults.baseURL = "http://139.59.235.133:80/api";
 
 const rootReducer = combineReducers({
   introduction: introduction,
@@ -54,6 +55,7 @@ ReactDOM.render(
         <Route path="/admin/product" element={<Product />} />
         <Route path="/admin/coupon" element={<Coupon />} />
         <Route path="/admin/order" element={<Orders />} />
+        <Route path="/admin/invoice" element={<Invoice />} />
         <Route path="/admin/news_category" element={<NewsCategory />} />
         <Route path="/admin/news" element={<News />} />
         <Route path="/admin/online_credit" element={<Online_credit />} />

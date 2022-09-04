@@ -71,6 +71,11 @@ const Sidebar = () => {
                 <span>Захиалга</span>
               </Link>
             </Menu.Item>
+            <Menu.Item icon={<RiFilePaper2Line />} key="/admin/invoice">
+              <Link to="/admin/invoice">
+                <span>Нэхэмжлэл</span>
+              </Link>
+            </Menu.Item>
           </Menu.ItemGroup>
           <Menu.ItemGroup key="g1" title="Мэдээ">
             <Menu.Item icon={<RiNewspaperFill />} key="/admin/news_category">
