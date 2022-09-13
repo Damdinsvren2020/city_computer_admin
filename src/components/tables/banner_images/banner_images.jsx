@@ -9,7 +9,6 @@ import { CDNURL } from "../../../CDNURL";
 const Banner_images = () => {
   const [banner, setBanner] = useState([]);
   const [createBannerModal, setCreateBannerModal] = useState(false);
-
   const [editCategory, seteditCategory] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [bannerEditId, setBannerEditId] = useState("");
@@ -23,6 +22,7 @@ const Banner_images = () => {
     const getBanner = async () => {
       const { data } = await axios.get("bannerimages");
       setBanner(data.result);
+      console.log("test", data.result);
     };
     getBanner();
   }, [refreshKey]);

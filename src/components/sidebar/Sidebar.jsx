@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, ContactsOutlined } from "@ant-design/icons";
 import {
   RiBriefcase3Line,
   RiFilter2Line,
@@ -10,7 +10,6 @@ import {
   RiCoupon3Fill,
   RiFilePaper2Line,
   RiNewspaperFill,
-  RiExchangeDollarFill,
 } from "react-icons/ri";
 
 // import Imagesss from "./logo-1.png";
@@ -89,13 +88,18 @@ const Sidebar = () => {
               </Link>
             </Menu.Item>
           </Menu.ItemGroup>
-          {/* <Menu.ItemGroup key="g1" title="Онлайн лизинг">
-            <Menu.Item icon={<RiExchangeDollarFill />} key="/admin/online_credit">
-              <Link to="/admin/online_credit">
-                <span>Онлайн лизинг</span>
+          <Menu.ItemGroup key="contact_1" title="Холбоо барих">
+            <Menu.Item icon={<ContactsOutlined />} key="/admin/online_credit">
+              <Link to="/admin/pages">
+                <span>Холбоо барих</span>
               </Link>
             </Menu.Item>
-          </Menu.ItemGroup> */}
+            <Menu.Item icon={<ContactsOutlined />} key="/admin/about">
+              <Link to="/admin/about">
+                <span>Бидний тухай</span>
+              </Link>
+            </Menu.Item>
+          </Menu.ItemGroup>
         </Menu>
       </Sider>
     </Layout>

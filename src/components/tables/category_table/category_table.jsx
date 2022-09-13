@@ -28,7 +28,7 @@ const Datatable = () => {
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(false);
 
-  const [subModal, setSubModal] = useState(false)
+  const [subModal, setSubModal] = useState(false);
 
   const [dropDownAngilal, setDropDownAngilal] = useState(false);
   const [matchingIndex, setMatchingIndex] = useState("");
@@ -295,7 +295,7 @@ const Datatable = () => {
             resetCategory();
           }}
         >
-          <PlusOutlined />  Категори нэмэх
+          <PlusOutlined /> Категори нэмэх
         </button>
       }
       extra={
@@ -409,17 +409,13 @@ const Datatable = () => {
                       <div className="w-full flex flex-col gap-2">
                         <input
                           value={subAngilalName}
-                          onChange={(e) =>
-                            setSubAngilalName(e.target.value)
-                          }
+                          onChange={(e) => setSubAngilalName(e.target.value)}
                           className="w-full border p-2"
                           placeholder="Дэд ангилал нэр"
                         />
                         <input
                           value={subAngilalDesc}
-                          onChange={(e) =>
-                            setSubAngilalDesc(e.target.value)
-                          }
+                          onChange={(e) => setSubAngilalDesc(e.target.value)}
                           className="w-full border p-2"
                           placeholder="Дэд ангилал тайлбар"
                         />
@@ -432,11 +428,7 @@ const Datatable = () => {
                           className="w-full bg-[#1990ff] p-2 text-white text-xl flex justify-center items-center"
                         >
                           {" "}
-                          {editSubAngilal ? (
-                            <EditOutlined />
-                          ) : (
-                            <PlusOutlined />
-                          )}
+                          {editSubAngilal ? <EditOutlined /> : <PlusOutlined />}
                         </button>
                       </div>
                       <div className="w-full ">
@@ -444,10 +436,16 @@ const Datatable = () => {
                           <div className="w-full p-2 hover:bg-gray-200 flex justify-between ">
                             <h1>{item.name}</h1>
                             <div className="gap-2 w-1/6 flex justify-evenly items-center">
-                              <button className="text-yellow-400 text-xl" onClick={() => setUpEditSub(item)}>
+                              <button
+                                className="text-yellow-400 text-xl"
+                                onClick={() => setUpEditSub(item)}
+                              >
                                 <EditOutlined />
                               </button>
-                              <button className="text-red-400 text-xl" onClick={() => deleteSubAngilal(item)}>
+                              <button
+                                className="text-red-400 text-xl"
+                                onClick={() => deleteSubAngilal(item)}
+                              >
                                 <DeleteOutlined />
                               </button>
                             </div>

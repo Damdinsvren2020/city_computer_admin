@@ -36,11 +36,11 @@ const Orders = () => {
           console.log(error);
         }
       };
-      authorize()
+      authorize();
     }
   }, [history, refresh]);
   return (
-    <div className="flex ">
+    <div>
       <div className=" flex flex-col h-screen">
         <Sidebar />
       </div>
