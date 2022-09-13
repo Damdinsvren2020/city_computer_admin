@@ -8,8 +8,8 @@
 .Banner .BannerContainer {
   width: 100%;
   -webkit-box-flex: 6;
-      -ms-flex: 6;
-          flex: 6;
+  -ms-flex: 6;
+  flex: 6;
 }
 
 .Banner .BannerContainer .widgets,
