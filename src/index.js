@@ -24,8 +24,8 @@ import News from "./pages/news/news.jsx";
 import Online_credit from "./pages/online_credit/online_credit";
 import BigCategory from "./pages/BigCategory.js/BigCategory";
 import Invoice from "./pages/Invoice/Invoice";
-import Pages from "./pages/Contact/Contact.jsx";
-import About from "./pages/about/about.jsx";
+import Pages from "./pages/Contact/Contact";
+import About from "./pages/about/about.js";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -33,7 +33,7 @@ const token = localStorage.getItem("token");
 
 axios.defaults.headers.post["Content-Type"] = "multipart/formdata";
 axios.defaults.headers.common["authorization"] = "Bearer " + token;
-axios.defaults.baseURL = "http://localhost:80/api";
+axios.defaults.baseURL = "http://139.59.235.133:80/api";
 
 const rootReducer = combineReducers({
   introduction: introduction,
