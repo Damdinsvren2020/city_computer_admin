@@ -123,16 +123,15 @@ const Contact_table = () => {
       style={{ marginLeft: "20px" }}
       className="overflow-auto"
       extra={
-        <Button
+        <button
           onClick={() => {
             showModal(true);
-
             resetform();
           }}
-          icon={<PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Холбоо барих нэмэх
-        </Button>
+          <PlusOutlined />  Холбоо барих нэмэх
+        </button>
       }
     >
       <TableContainer className="table">
@@ -150,7 +149,7 @@ const Contact_table = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {contact.map((row) => (
+            {contact?.map((row) => (
               <TableRow key={row._id}>
                 <TableCell className="tableCell">
                   <h2>{row.address}</h2>

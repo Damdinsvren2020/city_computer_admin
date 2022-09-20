@@ -122,16 +122,15 @@ const About_table = () => {
       style={{ marginLeft: "20px" }}
       className="overflow-auto"
       extra={
-        <Button
+        <button
           onClick={() => {
             showModal(true);
-
             resetform();
           }}
-          icon={<PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Нэмэх
-        </Button>
+          <PlusOutlined />  Нэмэх
+        </button>
       }
     >
       <TableContainer className="table">
@@ -148,7 +147,7 @@ const About_table = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {about.map((row) => (
+            {about?.map((row) => (
               <TableRow key={row._id}>
                 <TableCell className="tableCell">
                   <h2>{row.title}</h2>

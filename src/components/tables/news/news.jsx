@@ -190,16 +190,16 @@ const Datatable = () => {
     <Card
       style={{ marginLeft: "20px" }}
       extra={
-        <Button
+        <button
           onClick={() => {
             showModal(true);
             setEditBrand(false);
             resetform();
           }}
-          icon={<PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Мэдээ
-        </Button>
+          <PlusOutlined />  Мэдээ
+        </button>
       }
     >
       <TableContainer component={Paper} className="table">

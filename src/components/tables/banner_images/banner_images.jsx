@@ -201,15 +201,15 @@ const Banner_images = () => {
       title="Баннер"
       style={{ marginLeft: "20px" }}
       extra={
-        <Button
+        <button
           onClick={() => {
             setCreateBannerModal(true);
             setBannerEdit(false);
           }}
-          icon={<PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Баннер нэмэх
-        </Button>
+          <PlusOutlined />  Баннер нэмэх
+        </button>
       }
     >
       <Table size="small" columns={columns} dataSource={banner} />

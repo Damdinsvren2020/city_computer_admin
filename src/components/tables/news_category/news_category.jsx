@@ -16,6 +16,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { CDNURL } from "../../../CDNURL";
+import { ButtonBase } from "@mui/material";
 
 const Datatable = () => {
   const [form] = Form.useForm();
@@ -194,16 +195,16 @@ const Datatable = () => {
     <Card
       style={{ marginLeft: "20px" }}
       extra={
-        <Button
+        <button
           onClick={() => {
             showModal(true);
             setEditBrand(false);
             resetform();
           }}
-          icon={<PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Мэдээны ангилал
-        </Button>
+          <PlusOutlined />  Мэдээны ангилал
+        </button>
       }
     >
       <TableContainer component={Paper} className="table">

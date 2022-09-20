@@ -214,15 +214,15 @@ const CouponTable = () => {
       title="Купон"
       style={{ marginLeft: "20px" }}
       extra={
-        <Button
+        <button
           onClick={() => {
             setCouponModal(true)
             setEditMode("")
           }}
-          icon={< PlusOutlined />}
+          className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          Купон нэмэх
-        </Button >
+          < PlusOutlined />   Купон нэмэх
+        </button >
       }
     >
       <Modal title="Купон нэмэх" visible={couponModal} okText={editMode ? "Хадгалах" : "Бүртгэх"} cancelText={"Болих"} onOk={editMode ? () => handleEdit() : () => handleOk()} onCancel={handleCancel}>

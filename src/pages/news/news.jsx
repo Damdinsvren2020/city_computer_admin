@@ -40,11 +40,11 @@ const Orders = () => {
     }
   }, [history, refresh]);
   return (
-    <div>
+    <div className="flex ">
       <div className=" flex flex-col h-screen">
         <Sidebar />
       </div>
-      <div className="w-full bg-white	">
+      <div className="w-full bg-white	table">
         <Navbar />
         <News />
       </div>
