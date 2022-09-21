@@ -129,7 +129,7 @@ const About_table = () => {
           }}
           className="border p-2 rounded-md flex justify-center items-center gap-2"
         >
-          <PlusOutlined />  Нэмэх
+          <PlusOutlined /> Нэмэх
         </button>
       }
     >
