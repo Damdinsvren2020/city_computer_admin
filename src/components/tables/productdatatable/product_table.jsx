@@ -74,7 +74,7 @@ const Datatable = () => {
       const { data } = await axios.get("/product");
       if (data.success) {
         setData(data.result);
-        console.log(data.result)
+        console.log(data.result);
       }
     };
     getProducts();
@@ -240,9 +240,9 @@ const Datatable = () => {
     setProductQuantity(item.quantity);
     setProductSKU(item.SKU);
     setProductSpecList(item.specs);
-    setImageNew(false)
-    setImageNew1(false)
-    setImageNew2(false)
+    setImageNew(false);
+    setImageNew1(false);
+    setImageNew2(false);
 
     const { data } = await axios.get("/productSub/" + item.SubID._id);
     if (data.success) {
@@ -325,7 +325,7 @@ const Datatable = () => {
     }
   };
 
-  const editChosenAngilal = async () => { };
+  const editChosenAngilal = async () => {};
 
   const deleteProduct = async (product) => {
     Swal.fire({
@@ -359,7 +359,7 @@ const Datatable = () => {
   const [saleProductPrice, setSaleProductPrice] = useState("");
   const [saleProductID, setSaleProductID] = useState("");
   const [saleProductOffer, setSaleProductOffer] = useState(0);
-  const [saleProductDate, setSaleProductDate] = useState("")
+  const [saleProductDate, setSaleProductDate] = useState("");
 
   const onSaleProduct = (product) => {
     setOnSaleModal(true);
@@ -367,7 +367,7 @@ const Datatable = () => {
     setSaleProductPrice(product.price);
     setSaleProductID(product._id);
     setSaleProductOffer(product?.offer);
-    setSaleProductDate(product?.saleValidUntill)
+    setSaleProductDate(product?.saleValidUntill);
   };
 
   const resetSale = () => {
@@ -375,13 +375,13 @@ const Datatable = () => {
     setSaleProductID("");
     setSaleProductName("");
     setSaleProductOffer("");
-    setSaleProductDate("")
+    setSaleProductDate("");
   };
 
   const saveSelectedProductSale = async () => {
     const { data } = await axios.post("/productSale/" + saleProductID, {
       offer: saleProductOffer,
-      saleValidUntill: saleProductDate
+      saleValidUntill: saleProductDate,
     });
     if (data.success) {
       resetSale();
@@ -437,7 +437,9 @@ const Datatable = () => {
               .map((row) => (
                 <TableRow key={row._id}>
                   <TableCell className="tableCell">
-                    <div>{row.SubID.name !== null ? "Ангилалтай" : "Ангилалгүй"}</div>
+                    <div>
+                      {/* {row.SubID.name !== null ? "Ангилалтай" : "Ангилалгүй"} */}
+                    </div>
                   </TableCell>
                   <TableCell className="tableCell">
                     <div>
@@ -529,8 +531,9 @@ const Datatable = () => {
             placeholder="Ангилал нэрээр хайх"
           />
           <div
-            className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
-              }`}
+            className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${
+              openSelection ? "scale-y-100" : "scale-y-0"
+            }`}
           >
             <div className="w-full flex-1 p-2 overflow-auto">
               {filteredCategoryList?.map((item, index) => (
@@ -636,9 +639,7 @@ const Datatable = () => {
         </h1>
         <h1>
           Хямдаралын хугацаа-
-          {
-            saleProductDate
-          }
+          {saleProductDate}
         </h1>
       </Modal>
 
@@ -663,8 +664,9 @@ const Datatable = () => {
               placeholder="Ангилал нэрээр хайх"
             />
             <div
-              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${openSelection ? "scale-y-100" : "scale-y-0"
-                }`}
+              className={`absolute transform transition duration-300 origin-top top-16 w-full h-96 border border-t-0 left-0 bg-white z-30 flex flex-col ${
+                openSelection ? "scale-y-100" : "scale-y-0"
+              }`}
             >
               <div className="w-full flex-1 p-2 overflow-auto">
                 {filteredCategoryList?.map((item, index) => (
@@ -722,8 +724,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("first");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "first" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "first" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа
                 </div>
@@ -735,8 +738,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("second");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "second" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "second" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Бараа үзүүлэлт
                 </div>
@@ -748,8 +752,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("third");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "third" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "third" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Барааний зураг
                 </div>
@@ -761,8 +766,9 @@ const Datatable = () => {
                   onClick={() => {
                     setStep("final");
                   }}
-                  className={`px-2 py-1 rounded-sm  ${Step === "final" ? "bg-blue-200" : "bg-gray-200"
-                    } flex justify-center items-center cursor-pointer`}
+                  className={`px-2 py-1 rounded-sm  ${
+                    Step === "final" ? "bg-blue-200" : "bg-gray-200"
+                  } flex justify-center items-center cursor-pointer`}
                 >
                   Эцэс
                 </div>
